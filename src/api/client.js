@@ -1,12 +1,30 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const rawBase = import.meta.env.VITE_API_URL;
-const baseURL = rawBase?.replace(/\/+$/, '') || '/api';
+/**
+ * Backend origin from env (no trailing slash). Examples:
+ * - Production: https://your-service.up.railway.app
+ * - Or already: https://your-service.up.railway.app/api
+ * Leave empty in local dev to use Vite proxy → baseURL `/api`.
+ */
+export const API = (import.meta.env.VITE_API_URL ?? '').trim();
 
-if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+function resolveAxiosBaseURL() {
+  if (!API) {
+    return '/api';
+  }
+  let base = API.replace(/\/+$/, '');
+  if (!base.endsWith('/api')) {
+    base = `${base}/api`;
+  }
+  return base;
+}
+
+const baseURL = resolveAxiosBaseURL();
+
+if (import.meta.env.PROD && !API) {
   console.warn(
-    '[api] VITE_API_URL is not set — requests use same-origin /api. Set VITE_API_URL to your Render API (e.g. https://your-api.onrender.com/api) in Vercel env before build.'
+    '[api] VITE_API_URL is not set — requests use same-origin /api. Set VITE_API_URL to your Railway URL (e.g. https://xxx.up.railway.app) in Vercel env.'
   );
 }
 
