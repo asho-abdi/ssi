@@ -23,6 +23,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { AnnouncementBell } from './AnnouncementBell';
+import { SSILogo } from './SSILogo';
 import '../styles/dashboard.css';
 
 const navBase = { className: ({ isActive }) => `dash-nav-link ${isActive ? 'active' : ''}` };
@@ -73,7 +74,7 @@ function SidebarContent({ role, onNavigate }) {
   return (
     <>
       <div className="dash-brand">
-        <img src="/logo-full.png" alt="Success Skills Institute" className="dash-brand-logo" />
+        <SSILogo full withLink={false} className="dash-brand-logo" />
         <div>
           <div className="dash-role">
             <span className="dash-role-cap">{roleLabel}</span> dashboard

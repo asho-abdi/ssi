@@ -4,6 +4,10 @@ import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/client';
 import { getCartIds, removeFromCart, setCartIds } from '../utils/cart';
+import { resolveMediaUrl } from '../utils/mediaUrl';
+
+const CART_THUMB_FALLBACK =
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&q=80&auto=format&fit=crop';
 
 function getCoursePrice(course) {
   const sale = Number(course?.sale_price || 0);
@@ -85,7 +89,7 @@ export function Cart() {
             {cartCourses.map((course) => (
               <article key={course._id} className="card" style={{ display: 'grid', gridTemplateColumns: '72px 1fr auto', gap: '0.9rem', alignItems: 'center' }}>
                 <img
-                  src={course.thumbnail || '/logo-mark.png'}
+                  src={resolveMediaUrl(course.thumbnail) || CART_THUMB_FALLBACK}
                   alt={course.title}
                   style={{ width: 72, height: 54, borderRadius: 10, objectFit: 'cover', border: '1px solid var(--border)' }}
                 />

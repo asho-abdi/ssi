@@ -16,6 +16,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
 import { toEmbedSrc } from '../utils/embed';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import './CourseDetail.css';
 
 function splitBannerTitle(title) {
@@ -167,7 +168,8 @@ export function CourseDetail() {
   const canBuy = user?.role === 'student' || user?.role === 'admin';
   const showCheckoutActions = !enrollment && (!user || user?.role === 'student' || user?.role === 'admin');
   const { line1, line2 } = splitBannerTitle(course.title);
-  const hasUploadedBanner = Boolean(course.thumbnail);
+  const bannerThumbUrl = resolveMediaUrl(course.thumbnail);
+  const hasUploadedBanner = Boolean(bannerThumbUrl);
   const previewEmbedSrc = toEmbedSrc(course.video_url || lessonRows[0]?.video_url || '');
   const teacherName = course.teacher_id?.name || 'Instructor';
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=256`;
@@ -213,7 +215,7 @@ export function CourseDetail() {
               className="cd-banner-media"
               role="img"
               aria-label={course.title}
-              style={{ backgroundImage: `url(${course.thumbnail})` }}
+              style={{ backgroundImage: `url(${bannerThumbUrl})` }}
             />
           ) : (
             <div className="cd-banner-inner">

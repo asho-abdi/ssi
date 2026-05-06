@@ -23,13 +23,15 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
+/** CDN fallbacks so hero works on Vercel without committing `public/ssi-photo-*.png` */
 const HERO_IMAGES = [
-  '/ssi-photo-1.png',
-  '/ssi-photo-2.png',
-  '/ssi-photo-1.png',
+  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1400&q=85&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&q=85&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1400&q=85&auto=format&fit=crop',
 ];
 const FEATURE_POINTS = [
   'Access to all courses',
@@ -353,7 +355,7 @@ export function Home() {
               const { first, second } = splitTitleForBanner(c.title);
               const teacherName = c.teacher_id?.name || 'Instructor';
               const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
-              const courseThumb = c.thumbnail || '';
+              const courseThumb = resolveMediaUrl(c.thumbnail) || '';
               const inCart = isInCart(c._id);
               const displayPrice = getCoursePrice(c);
               const hasSale = displayPrice < Number(c.price || 0);
