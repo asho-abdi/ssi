@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Search, Tag } from 'lucide-react';
-import { AppImage } from '../components/common/AppImage';
 import { SSILogo } from '../components/SSILogo';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
@@ -160,12 +159,10 @@ export function Events() {
                   className="overflow-hidden rounded-[14px] border border-[rgba(29,53,87,0.08)] bg-white shadow-[0_10px_24px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(15,23,42,0.12)]"
                 >
                   <div className="relative">
-                    <AppImage
+                    <img
                       src={item.image}
                       alt={item.title}
-                      fallback="/placeholder-course.svg"
-                      width={840}
-                      quality={82}
+                      loading="lazy"
                       className="block h-[212px] w-full object-cover object-center"
                     />
                     <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-md bg-[#1d3f72] px-2 py-1 text-[0.72rem] font-bold text-white">

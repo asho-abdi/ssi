@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../../api/client';
-import { AppImage } from '../../components/common/AppImage';
 import { PERMISSION_CATALOG, resolvePermissions } from '../../utils/permissions';
 
 const FILTER_PAGE_LABEL = {
@@ -315,15 +314,7 @@ export function AdminUsers({ initialRoleFilter = 'student' }) {
                     <td>
                       <div className="au-user-cell">
                         {resolveAvatarUrl(u) ? (
-                          <AppImage
-                            src={resolveAvatarUrl(u)}
-                            alt={u.name || 'User avatar'}
-                            className="au-avatar-img"
-                            width={88}
-                            height={88}
-                            quality={80}
-                            fallback="/logo-mark.svg"
-                          />
+                          <img src={resolveAvatarUrl(u)} alt={u.name || 'User avatar'} className="au-avatar-img" />
                         ) : (
                           <span className="au-avatar">{initials(u.name)}</span>
                         )}

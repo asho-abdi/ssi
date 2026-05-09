@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../../api/client';
-import { AppImage } from '../../components/common/AppImage';
 
 export function AdminCertificates() {
   const [certs, setCerts] = useState([]);
@@ -109,12 +108,9 @@ export function AdminCertificates() {
             <small style={{ color: 'var(--muted)' }}>Max 4MB</small>
             {template.design_image && (
               <div style={{ marginTop: '0.6rem' }}>
-                <AppImage
+                <img
                   src={template.design_image}
                   alt="Certificate design preview"
-                  width={900}
-                  quality={85}
-                  fallback="/placeholder-course.svg"
                   style={{
                     width: '100%',
                     maxWidth: 420,
