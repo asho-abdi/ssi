@@ -80,6 +80,7 @@ export function Home() {
   const { user, logout } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('newest');
   const [heroSlide, setHeroSlide] = useState(0);
@@ -99,8 +100,20 @@ export function Home() {
   useEffect(() => {
     api
       .get('/courses')
-      .then((res) => setCourses(res.data))
-      .catch(() => setCourses([]))
+      .then((res) => {
+        const rows = Array.isArray(res.data) ? res.data : [];
+        setCourses(rows);
+        setLoadError('');
+      })
+      .catch((err) => {
+        setCourses([]);
+        const apiBase = (import.meta.env.VITE_API_URL || '').trim();
+        const serverMessage = String(err?.response?.data?.message || '').trim();
+        const hint = apiBase
+          ? `Could not load courses from API (${apiBase}).`
+          : 'Could not load courses. Set VITE_API_URL in Vercel to your Railway backend URL.';
+        setLoadError(serverMessage ? `${hint} ${serverMessage}` : hint);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -348,6 +361,11 @@ export function Home() {
         <div className="landing-inner">
           <h2 className="landing-section-title">Course catalog</h2>
           {loading && <p style={{ color: 'var(--ssi-muted, #707070)' }}>Loading courses…</p>}
+          {!loading && loadError && (
+            <p style={{ color: '#b91c1c', fontWeight: 600 }}>
+              {loadError}
+            </p>
+          )}
           <div className="landing-course-grid">
             {!loading && filtered.length === 0 && (
               <p className="landing-empty">No courses match your filters.</p>
