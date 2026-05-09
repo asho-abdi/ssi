@@ -311,14 +311,22 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.65rem 0;
+  padding: 0.6rem 0.5rem;
   border-bottom: 1px solid #f1f5f9;
+  border-radius: 6px;
   font-size: 0.92rem;
-  color: #475569;
+  color: #1e293b;
+  font-weight: 500;
+  cursor: default;
+  transition: background 0.15s ease;
 }
 
 .cd-lesson-row:last-child {
   border-bottom: none;
+}
+
+.cd-lesson-row:hover {
+  background: #f8fafc;
 }
 
 .cd-lesson-row svg {
@@ -653,7 +661,6 @@
 
 .cd-desc,
 .cd-meta-chips,
-.cd-lesson-row,
 .cd-meta-list li {
   color: var(--muted);
 }
