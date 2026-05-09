@@ -40,23 +40,6 @@ const FEATURE_POINTS = [
   'Project-based learning',
 ];
 
-const CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'business', label: 'Business & Management' },
-  { id: 'health', label: 'Health' },
-  { id: 'personal', label: 'Personal Development' },
-  { id: 'technology', label: 'Technology' },
-  { id: 'data', label: 'Data Analysis' },
-];
-
-function inferCategory(course) {
-  const t = `${course.title} ${course.description || ''}`.toLowerCase();
-  if (/\b(data|analytic|analyst|sql|python)\b/.test(t)) return 'data';
-  if (/\b(health|wellness|medical|fitness)\b/.test(t)) return 'health';
-  if (/\b(business|management|finance|mern|bootcamp|leadership)\b/.test(t)) return 'business';
-  if (/\b(ui|ux|css|personal|design|developer|interface)\b/.test(t)) return 'personal';
-  return 'technology';
-}
 
 function splitTitleForBanner(title) {
   const words = title.trim().split(/\s+/);
@@ -78,6 +61,7 @@ function getCoursePrice(course) {
 export function Home() {
   const { user, logout } = useAuth();
   const [courses, setCourses] = useState([]);
+  const [dbCategories, setDbCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('newest');
@@ -96,10 +80,12 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    api
-      .get('/courses')
-      .then((res) => setCourses(res.data))
-      .catch(() => setCourses([]))
+    Promise.all([api.get('/courses'), api.get('/categories')])
+      .then(([courseRes, catRes]) => {
+        setCourses(courseRes.data);
+        setDbCategories(catRes.data || []);
+      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -111,9 +97,12 @@ export function Home() {
   }, []);
 
   const filtered = useMemo(() => {
-    let list = courses.map((c) => ({ ...c, _cat: inferCategory(c) }));
+    let list = [...courses];
     if (category !== 'all') {
-      list = list.filter((c) => c._cat === category);
+      list = list.filter((c) => {
+        const catId = c.category_id?._id || c.category_id;
+        return String(catId) === String(category);
+      });
     }
     const sorted = [...list];
     if (sort === 'newest') {
@@ -132,8 +121,9 @@ export function Home() {
     return sorted;
   }, [courses, category, sort]);
 
-  function categoryLabel(categoryId) {
-    return CATEGORIES.find((c) => c.id === categoryId)?.label || 'General';
+  function categoryLabel(catObj) {
+    if (!catObj) return 'General';
+    return catObj.name || 'General';
   }
 
   function isInCart(courseId) {
@@ -318,14 +308,21 @@ export function Home() {
       <section className="landing-filters">
         <div className="landing-inner landing-filters-row">
           <div className="landing-filter-pills" role="group" aria-label="Categories">
-            {CATEGORIES.map((c) => (
+            <button
+              type="button"
+              className={category === 'all' ? 'on' : 'off'}
+              onClick={() => setCategory('all')}
+            >
+              All
+            </button>
+            {dbCategories.map((c) => (
               <button
-                key={c.id}
+                key={c._id}
                 type="button"
-                className={category === c.id ? 'on' : 'off'}
-                onClick={() => setCategory(c.id)}
+                className={category === c._id ? 'on' : 'off'}
+                onClick={() => setCategory(c._id)}
               >
-                {c.label}
+                {c.name}
               </button>
             ))}
           </div>
@@ -405,7 +402,7 @@ export function Home() {
                           .toUpperCase()}
                       </span>
                       <span>
-                        By <strong>{teacherName}</strong> in <strong>{categoryLabel(c._cat)}</strong>
+                        By <strong>{teacherName}</strong> in <strong>{categoryLabel(c.category_id)}</strong>
                       </span>
                     </div>
                   </div>
