@@ -424,7 +424,8 @@ export function WatchCourse() {
 
   function resourceUsesSecureDownload(resource) {
     const sp = String(resource.storage_path || '');
-    const u = String(resource.url || '');
+    const u = String(resource.url || '').trim();
+    if (u.startsWith('https://') || u.startsWith('http://')) return true;
     return sp.includes('/uploads/resources/') || u.includes('/uploads/resources/');
   }
 

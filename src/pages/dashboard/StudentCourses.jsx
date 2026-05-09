@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpenCheck, Clock3, Flame, PlayCircle, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api/client';
+import { SafeImage } from '../../components/SafeImage';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
 import '../../styles/student-dashboard.css';
 
@@ -196,13 +197,13 @@ export function StudentCourses() {
                   }}
                 >
                   <div className="sd-thumb-wrap">
-                    <img
+                    <SafeImage
                       className="sd-thumb"
-                      src={
-                        resolveMediaUrl(row.course_id?.thumbnail) ||
-                        'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200'
-                      }
+                      src={resolveMediaUrl(row.course_id?.thumbnail)}
                       alt=""
+                      width={640}
+                      quality={85}
+                      placeholder="/placeholder-course.svg"
                     />
                     <span className={`sd-badge ${meta.className}`}>{meta.label}</span>
                     {showRecent ? (

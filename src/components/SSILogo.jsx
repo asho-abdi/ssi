@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-/** Text mark when `public/logo-*.png` is missing (common on Vercel if assets weren’t committed). */
+/** Text mark when all logo assets fail to load. */
 function FallbackWordmark({ full, className, alt }) {
   return (
     <span
@@ -23,12 +23,18 @@ function FallbackWordmark({ full, className, alt }) {
   );
 }
 
+const SRC_CHAINS = {
+  full: ['/logo-full.svg', '/logo-full.png'],
+  mark: ['/logo-mark.svg', '/logo-mark.png'],
+};
+
 export function SSILogo({ full = true, className = '', withLink = true }) {
-  const [useFallback, setUseFallback] = useState(false);
+  const [srcIndex, setSrcIndex] = useState(0);
   const alt = full ? 'Success Skills Institute' : 'SSI logo';
   const imgClass = `${full ? 'landing-logo-full' : 'landing-logo-mark'} ${className}`.trim();
+  const chain = full ? SRC_CHAINS.full : SRC_CHAINS.mark;
 
-  if (useFallback) {
+  if (srcIndex >= chain.length) {
     const inner = <FallbackWordmark full={full} className={imgClass} alt={alt} />;
     if (!withLink) return inner;
     return (
@@ -38,9 +44,15 @@ export function SSILogo({ full = true, className = '', withLink = true }) {
     );
   }
 
-  const src = full ? '/logo-full.png' : '/logo-mark.png';
   const img = (
-    <img src={src} alt={alt} className={imgClass} onError={() => setUseFallback(true)} loading="eager" decoding="async" />
+    <img
+      src={chain[srcIndex]}
+      alt={alt}
+      className={imgClass}
+      onError={() => setSrcIndex((i) => i + 1)}
+      loading="eager"
+      decoding="async"
+    />
   );
 
   if (!withLink) {

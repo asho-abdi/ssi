@@ -38,6 +38,10 @@ export function resolveMediaUrl(url) {
     if (origin && isLocal) {
       return `${origin}${u.pathname}${u.search}${u.hash}`;
     }
+    // Stale deploy hostnames / wrong host in DB — always serve /uploads from current backend
+    if (origin && u.pathname.startsWith('/uploads/')) {
+      return `${origin}${u.pathname}${u.search}${u.hash}`;
+    }
     return s;
   }
 
@@ -49,4 +53,31 @@ export function resolveMediaUrl(url) {
   }
 
   return s;
+}
+
+/**
+ * Display helper: resolve legacy `/uploads`/`localhost` URLs, then add ImageKit `tr` transforms
+ * (auto format, quality, optional width) for faster LCP on course grids and avatars.
+ *
+ * Stored DB values remain full canonical ImageKit URLs; this only affects `<img src>`.
+ */
+export function normalizeImageUrl(url, opts = {}) {
+  const resolved = resolveMediaUrl(url);
+  if (!resolved) return '';
+  const w = opts.width ?? opts.w;
+  const q = Number.isFinite(Number(opts.quality)) ? Number(opts.quality) : 80;
+  try {
+    const u = new URL(resolved);
+    const endpointBase = (import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT || '').replace(/\/+$/, '');
+    const isIk =
+      u.hostname.includes('ik.imagekit.io') || Boolean(endpointBase && u.href.startsWith(endpointBase));
+    if (!isIk) return resolved;
+    if (u.searchParams.has('tr')) return resolved;
+    const parts = ['f-auto', `q-${q}`];
+    if (w) parts.push(`w-${w}`);
+    u.searchParams.set('tr', parts.join(','));
+    return u.toString();
+  } catch {
+    return resolved;
+  }
 }

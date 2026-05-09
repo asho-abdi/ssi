@@ -313,7 +313,7 @@ export function AdminCategories() {
                     <td>
                       <img
                         className="cat-thumb"
-                        src={c.thumbnail || 'https://placehold.co/44x44/e2e8f0/94a3b8?text=+'}
+                        src={c.thumbnail || '/placeholder-course.svg'}
                         alt={c.name}
                       />
                     </td>

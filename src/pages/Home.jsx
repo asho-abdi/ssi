@@ -23,16 +23,16 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
-import { resolveMediaUrl } from '../utils/mediaUrl';
+import { resolveMediaUrl, normalizeImageUrl } from '../utils/mediaUrl';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
-/** CDN fallbacks so hero works on Vercel without committing `public/ssi-photo-*.png` */
-const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1400&q=85&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&q=85&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1400&q=85&auto=format&fit=crop',
-];
+/** Local assets in `frontend/public/`; optional override: `VITE_HERO_IMAGES` = comma-separated URLs */
+const envHeroSlides = (import.meta.env.VITE_HERO_IMAGES || '')
+  .split(',')
+  .map((x) => x.trim())
+  .filter(Boolean);
+const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg'];
 const FEATURE_POINTS = [
   'Access to all courses',
   'Certificate of completion',
@@ -105,7 +105,7 @@ export function Home() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setHeroSlide((s) => (s + 1) % HERO_IMAGES.length);
+      setHeroSlide((s) => (s + 1) % HERO_SLIDES.length);
     }, 5500);
     return () => clearInterval(id);
   }, []);
@@ -248,13 +248,13 @@ export function Home() {
             <div className="landing-hero-img-wrap">
               <div
                 className="landing-hero-slide"
-                style={{ backgroundImage: `url(${HERO_IMAGES[heroSlide]})` }}
+                style={{ backgroundImage: `url(${HERO_SLIDES[heroSlide]})` }}
                 role="img"
                 aria-label="Learning event"
               />
             </div>
             <div className="landing-hero-dots" role="tablist" aria-label="Hero images">
-              {HERO_IMAGES.map((_, i) => (
+              {HERO_SLIDES.map((_, i) => (
                 <button
                   key={i}
                   type="button"
@@ -354,8 +354,12 @@ export function Home() {
             {filtered.map((c) => {
               const { first, second } = splitTitleForBanner(c.title);
               const teacherName = c.teacher_id?.name || 'Instructor';
-              const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
-              const courseThumb = resolveMediaUrl(c.thumbnail) || '';
+              const teacherAvatar = normalizeImageUrl(c.teacher_id?.avatar_url, { width: 128, quality: 80 });
+              const avatar =
+                teacherAvatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
+              const courseThumbRaw = resolveMediaUrl(c.thumbnail) || '';
+              const courseThumb = courseThumbRaw ? normalizeImageUrl(courseThumbRaw, { width: 800, quality: 85 }) : '';
               const inCart = isInCart(c._id);
               const displayPrice = getCoursePrice(c);
               const hasSale = displayPrice < Number(c.price || 0);
