@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/client';
+import { AppImage } from '../components/common/AppImage';
 import { getCartIds, removeFromCart, setCartIds } from '../utils/cart';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
@@ -87,9 +88,12 @@ export function Cart() {
           <div style={{ display: 'grid', gap: '0.8rem', marginTop: '1rem' }}>
             {cartCourses.map((course) => (
               <article key={course._id} className="card" style={{ display: 'grid', gridTemplateColumns: '72px 1fr auto', gap: '0.9rem', alignItems: 'center' }}>
-                <img
-                  src={resolveMediaUrl(course.thumbnail) || CART_THUMB_FALLBACK}
+                <AppImage
+                  src={resolveMediaUrl(course.thumbnail)}
                   alt={course.title}
+                  fallback={CART_THUMB_FALLBACK}
+                  width={160}
+                  quality={80}
                   style={{ width: 72, height: 54, borderRadius: 10, objectFit: 'cover', border: '1px solid var(--border)' }}
                 />
                 <div>

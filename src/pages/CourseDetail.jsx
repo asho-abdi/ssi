@@ -13,10 +13,11 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/client';
+import { AppImage } from '../components/common/AppImage';
 import { useAuth } from '../context/AuthContext';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
 import { toEmbedSrc } from '../utils/embed';
-import { resolveMediaUrl } from '../utils/mediaUrl';
+import { normalizeImageUrl, resolveMediaUrl } from '../utils/mediaUrl';
 import './CourseDetail.css';
 
 function splitBannerTitle(title) {
@@ -170,9 +171,11 @@ export function CourseDetail() {
   const { line1, line2 } = splitBannerTitle(course.title);
   const bannerThumbUrl = resolveMediaUrl(course.thumbnail);
   const hasUploadedBanner = Boolean(bannerThumbUrl);
+  const bannerThumbOptimized = hasUploadedBanner ? normalizeImageUrl(bannerThumbUrl, { width: 1400, quality: 85 }) : '';
   const previewEmbedSrc = toEmbedSrc(course.video_url || lessonRows[0]?.video_url || '');
   const teacherName = course.teacher_id?.name || 'Instructor';
-  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=256`;
+  const teacherAvatar = normalizeImageUrl(course.teacher_id?.avatar_url, { width: 256, quality: 85, fallback: '' });
+  const avatarUrl = teacherAvatar || '/logo-mark.svg';
   const updated = course.updatedAt ? new Date(course.updatedAt) : null;
   const displayPrice = getCoursePrice(course);
   const hasSale = displayPrice < Number(course.price || 0);
@@ -215,7 +218,7 @@ export function CourseDetail() {
               className="cd-banner-media"
               role="img"
               aria-label={course.title}
-              style={{ backgroundImage: `url(${bannerThumbUrl})` }}
+              style={{ backgroundImage: `url(${bannerThumbOptimized})` }}
             />
           ) : (
             <div className="cd-banner-inner">
@@ -226,7 +229,7 @@ export function CourseDetail() {
                 </h1>
                 <span className="cd-join-pill">JOIN OUR COURSE</span>
               </div>
-              <img className="cd-banner-avatar" src={avatarUrl} alt="" width={120} height={120} />
+              <AppImage className="cd-banner-avatar" src={avatarUrl} alt="" width={120} height={120} quality={80} fallback="/logo-mark.svg" />
             </div>
           )}
         </section>
@@ -435,7 +438,7 @@ export function CourseDetail() {
             <div className="cd-side-card">
               <p className="cd-instructor-label">A course by</p>
               <div className="cd-instructor-row">
-                <img src={avatarUrl} alt="" width={52} height={52} />
+                <AppImage src={avatarUrl} alt="" width={52} height={52} quality={80} fallback="/logo-mark.svg" />
                 <div>
                   <strong>{teacherName}</strong>
                   <span className="cd-muted cd-instructor-subtitle">

@@ -20,10 +20,11 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/client';
+import { AppImage } from '../components/common/AppImage';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
-import { resolveMediaUrl } from '../utils/mediaUrl';
+import { normalizeImageUrl, resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
@@ -354,7 +355,8 @@ export function Home() {
             {filtered.map((c) => {
               const { first, second } = splitTitleForBanner(c.title);
               const teacherName = c.teacher_id?.name || 'Instructor';
-              const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
+              const teacherAvatar = normalizeImageUrl(c.teacher_id?.avatar_url, { width: 160, quality: 80, fallback: '' });
+              const avatar = teacherAvatar || '/logo-mark.svg';
               const courseThumb = resolveMediaUrl(c.thumbnail) || '';
               const inCart = isInCart(c._id);
               const displayPrice = getCoursePrice(c);
@@ -364,7 +366,13 @@ export function Home() {
                   <Link to={`/courses/${c._id}`} className="landing-course-media-link">
                     <div className={`landing-course-banner ${courseThumb ? 'has-thumb' : ''}`}>
                       {courseThumb ? (
-                        <img src={courseThumb} alt={c.title} className="landing-course-banner-image" loading="lazy" />
+                        <AppImage
+                          src={courseThumb}
+                          alt={c.title}
+                          className="landing-course-banner-image"
+                          width={920}
+                          quality={85}
+                        />
                       ) : (
                         <div className="landing-course-banner-inner">
                           <div>
@@ -379,7 +387,7 @@ export function Home() {
                             </p>
                             <span className="landing-course-join">JOIN OUR COURSE</span>
                           </div>
-                          <img className="landing-course-avatar" src={avatar} alt="" width={64} height={64} />
+                          <AppImage className="landing-course-avatar" src={avatar} alt="" width={64} height={64} quality={80} fallback="/logo-mark.svg" />
                         </div>
                       )}
                     </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api/client';
+import { AppImage } from '../../components/common/AppImage';
 
 const emptyCategoryForm = {
   name: '',
@@ -311,9 +312,13 @@ export function AdminCategories() {
                       />
                     </td>
                     <td>
-                      <img
+                      <AppImage
                         className="cat-thumb"
-                        src={c.thumbnail || 'https://placehold.co/44x44/e2e8f0/94a3b8?text=+'}
+                        src={c.thumbnail}
+                        fallback="/placeholder-course.svg"
+                        width={88}
+                        height={88}
+                        quality={80}
                         alt={c.name}
                       />
                     </td>

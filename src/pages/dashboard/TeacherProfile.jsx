@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Bell, BookOpenCheck, Camera, DollarSign, Globe, Link2, Mail, Shield, UserCircle, Users } from 'lucide-react';
 import api from '../../api/client';
+import { AppImage } from '../../components/common/AppImage';
 import { DashboardPage, SectionCard, SummaryCard, SummaryGrid } from '../../components/dashboard/DashboardUI';
 import { useAuth } from '../../context/AuthContext';
 
@@ -16,6 +17,7 @@ export function TeacherProfile() {
     phone: '',
     bio: '',
     avatarUrl: '',
+    avatarFileId: '',
   });
   const [social, setSocial] = useState({
     facebook: '',
@@ -59,6 +61,7 @@ export function TeacherProfile() {
           phone: me.phone || '',
           bio: me.bio || '',
           avatarUrl: me.avatar_url || '',
+          avatarFileId: me.avatar_file_id || '',
         }));
         setSocial({
           facebook: me.social?.facebook || '',
@@ -96,6 +99,7 @@ export function TeacherProfile() {
         phone: profile.phone,
         bio: profile.bio,
         avatar_url: profile.avatarUrl,
+        avatar_file_id: profile.avatarFileId,
         social: {
           facebook: social.facebook,
           linkedin: social.linkedin,
@@ -170,9 +174,16 @@ export function TeacherProfile() {
         const { data } = await api.post('/uploads/images', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        const nextProfile = { ...profile, avatarUrl: data.url || '' };
+        const nextProfile = {
+          ...profile,
+          avatarUrl: data.url || '',
+          avatarFileId: String(data.fileId || '').trim(),
+        };
         setProfile(nextProfile);
-        await api.patch('/auth/profile', { avatar_url: nextProfile.avatarUrl });
+        await api.patch('/auth/profile', {
+          avatar_url: nextProfile.avatarUrl,
+          avatar_file_id: nextProfile.avatarFileId,
+        });
         await refreshUser();
         toast.success('Avatar updated');
       } catch (err) {
@@ -206,7 +217,15 @@ export function TeacherProfile() {
         <aside className="card tp-profile-card card--static">
           <div className="tp-avatar-wrap">
             {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.name || 'Instructor avatar'} className="tp-avatar-img" />
+              <AppImage
+                src={profile.avatarUrl}
+                alt={profile.name || 'Instructor avatar'}
+                className="tp-avatar-img"
+                width={220}
+                height={220}
+                quality={85}
+                fallback="/logo-mark.svg"
+              />
             ) : (
               <div className="tp-avatar-fallback">
                 <UserCircle size={44} />
