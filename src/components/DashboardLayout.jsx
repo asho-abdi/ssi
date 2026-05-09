@@ -19,6 +19,7 @@ import {
   PlayCircle,
   Award,
   Bell,
+  ClipboardList,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -41,6 +42,7 @@ function dashboardHeaderMeta(pathname) {
     { startsWith: '/dashboard/admin/announcements', title: 'Announcements', subtitle: 'Publish dashboard communication updates' },
     { startsWith: '/dashboard/admin/reviews', title: 'Reviews', subtitle: 'Moderate student feedback and ratings' },
     { startsWith: '/dashboard/admin/certificates', title: 'Certificates', subtitle: 'Create and manage completion certificates' },
+    { startsWith: '/dashboard/admin/offline-enrollments', title: 'Offline Enrollments', subtitle: 'Manage in-person class registrations and attendance' },
     { startsWith: '/dashboard/notifications', title: 'Notifications', subtitle: 'Announcements, thread updates, and course alerts' },
     { startsWith: '/dashboard/teacher/courses', title: 'Instructor Courses', subtitle: 'Build and edit your learning products' },
     { startsWith: '/dashboard/teacher/earnings', title: 'Earnings', subtitle: 'Revenue trends and payout overview' },
@@ -118,6 +120,7 @@ function SidebarContent({ role, onNavigate }) {
             {link('/dashboard/admin/announcements', <Megaphone size={20} />, 'Announcements')}
             {link('/dashboard/admin/reviews', <MessageSquareText size={20} />, 'Reviews')}
             {link('/dashboard/admin/certificates', <FileCheck2 size={20} />, 'Certificates')}
+            {link('/dashboard/admin/offline-enrollments', <ClipboardList size={20} />, 'Offline Enrollments')}
             {link('/dashboard/notifications', <Bell size={20} />, 'Notifications')}
             <div className={`dash-users-dropdown ${usersPathActive ? 'active' : ''}`}>
               <button

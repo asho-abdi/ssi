@@ -169,6 +169,9 @@ export function Home() {
             <Link to="/events">
               Events
             </Link>
+            <Link to="/offline-enrollment">
+              Offline Enrollment
+            </Link>
             <a href="#footer-contact">
               Contacts
             </a>
@@ -475,6 +478,22 @@ export function Home() {
         </div>
       </section>
 
+      <section className="landing-offline-banner">
+        <div className="landing-inner landing-offline-inner">
+          <div className="landing-offline-text">
+            <span className="landing-offline-tag">In-Person Classes</span>
+            <h2>Prefer Learning Face-to-Face?</h2>
+            <p>
+              Register for our offline courses at SSI headquarters in Mogadishu.
+              Meet instructors in person, collaborate with peers, and get hands-on guidance.
+            </p>
+          </div>
+          <Link to="/offline-enrollment" className="landing-btn-offline">
+            Register for Offline Class <ArrowRight size={17} />
+          </Link>
+        </div>
+      </section>
+
       <footer id="footer-contact" className="landing-footer">
         <div className="landing-inner landing-footer-grid">
           <div>
@@ -509,6 +528,9 @@ export function Home() {
               </li>
               <li>
                 <Link to="/events">Events</Link>
+              </li>
+              <li>
+                <Link to="/offline-enrollment">Offline Enrollment</Link>
               </li>
             </ul>
           </div>

@@ -819,6 +819,86 @@
   background: #4a5568;
 }
 
+/* —— Offline enrollment banner —— */
+.landing-offline-banner {
+  background: #f0f7ff;
+  border-top: 1px solid #dbeafe;
+  border-bottom: 1px solid #dbeafe;
+  padding: 2.75rem 1.25rem;
+}
+
+.landing-offline-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.landing-offline-text {
+  flex: 1;
+  min-width: 240px;
+}
+
+.landing-offline-tag {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.65rem;
+  border-radius: 20px;
+  margin-bottom: 0.65rem;
+}
+
+.landing-offline-text h2 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  color: #1e3a5f;
+  font-weight: 700;
+}
+
+.landing-offline-text p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  max-width: 520px;
+}
+
+.landing-btn-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #1d3557;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.93rem;
+  padding: 0.75rem 1.4rem;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.landing-btn-offline:hover {
+  background: #16293f;
+}
+
+@media (max-width: 640px) {
+  .landing-offline-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .landing-btn-offline {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* —— CTA band —— */
 .landing-cta {
   background: var(--ssi-navy-footer);

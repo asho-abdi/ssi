@@ -5,6 +5,7 @@ import { DashboardLayout } from './components/DashboardLayout';
 import { StudentLayout } from './components/StudentLayout';
 import { Home } from './pages/Home';
 import { Events } from './pages/Events';
+import { OfflineEnrollment } from './pages/OfflineEnrollment';
 import { BecomeInstructor } from './pages/BecomeInstructor';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -30,6 +31,7 @@ import { AdminCertificates } from './pages/dashboard/AdminCertificates';
 import { AdminReports } from './pages/dashboard/AdminReports';
 import { AdminSettings } from './pages/dashboard/AdminSettings';
 import { AdminAnnouncements } from './pages/dashboard/AdminAnnouncements';
+import { AdminOfflineEnrollments } from './pages/dashboard/AdminOfflineEnrollments';
 import { TeacherCourses } from './pages/dashboard/TeacherCourses';
 import { TeacherEarnings } from './pages/dashboard/TeacherEarnings';
 import { TeacherProfile } from './pages/dashboard/TeacherProfile';
@@ -43,6 +45,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/events" element={<Events />} />
+      <Route path="/offline-enrollment" element={<OfflineEnrollment />} />
       <Route path="/become-instructor" element={<BecomeInstructor />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -98,6 +101,7 @@ export default function App() {
           <Route path="admin/settings" element={<AdminSettings />} />
           <Route path="admin/reviews" element={<AdminReviews />} />
           <Route path="admin/certificates" element={<AdminCertificates />} />
+          <Route path="admin/offline-enrollments" element={<AdminOfflineEnrollments />} />
         </Route>
         <Route element={<RoleRoute roles={['teacher']} />}>
           <Route path="teacher/courses" element={<TeacherCourses />} />
