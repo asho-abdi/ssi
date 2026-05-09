@@ -6,7 +6,9 @@ import {
   BarChart3,
   ChevronDown,
   Clock,
-  PlayCircle,
+  FileText,
+  Lock,
+  PlaySquare,
   RefreshCw,
   Star,
   User,
@@ -51,7 +53,7 @@ export function CourseDetail() {
   const [reviews, setReviews] = useState({ reviews: [], average_rating: 0, count: 0 });
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('info');
-  const [accOpen, setAccOpen] = useState(true);
+  const [openModules, setOpenModules] = useState({});
   const [enrollmentState, setEnrollmentState] = useState({ loading: true, data: null });
   const [prog, setProg] = useState({ loading: true, data: null });
   const [cartIds, setCartIds] = useState(() => getCartIds());
@@ -127,18 +129,29 @@ export function CourseDetail() {
     };
   }, [id, user]);
 
-  const lessonRows = useMemo(() => {
+  const modules = useMemo(() => {
     if (!course) return [];
-    if (course.lessons?.length) {
-      return course.lessons.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (course.course_topics?.length) {
+      return course.course_topics.map((topic, ti) => ({
+        _id: topic._id || `topic-${ti}`,
+        title: topic.title || `Module ${ti + 1}`,
+        lessons: (topic.lessons || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+        resources: topic.resources || [],
+      }));
     }
-    if (course.video_url) {
-      return [{ title: 'Introduction', _id: 'intro', order: 0 }];
-    }
-    return [];
+    const flat = course.lessons?.length
+      ? course.lessons.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      : course.video_url
+        ? [{ title: 'Introduction', _id: 'intro', order: 0 }]
+        : [];
+    const allRes = course.all_resources || [];
+    return flat.length || allRes.length
+      ? [{ _id: 'chapter-1', title: 'Chapter 1 — Introduction to the course', lessons: flat, resources: allRes }]
+      : [];
   }, [course]);
 
-  const totalLessons = lessonRows.length || 0;
+  const lessonRows = useMemo(() => modules.flatMap((m) => m.lessons), [modules]);
+  const totalLessons = lessonRows.length;
 
   const progressPct = useMemo(() => {
     if (!prog.data) return 0;
@@ -188,6 +201,15 @@ export function CourseDetail() {
     const updated = addToCart(course._id);
     setCartIds(updated);
     toast.success('Added to cart');
+  }
+
+  function toggleModule(id) {
+    setOpenModules((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
+
+  function isModuleOpen(id, idx) {
+    if (id in openModules) return openModules[id];
+    return idx === 0;
   }
 
   return (
@@ -284,31 +306,43 @@ export function CourseDetail() {
                 </div>
 
                 <h2 className="cd-section-title">Course Content</h2>
-                <div className="cd-acc">
-                  <button
-                    type="button"
-                    className={`cd-acc-trigger ${accOpen ? 'is-open' : ''}`}
-                    onClick={() => setAccOpen((o) => !o)}
-                    aria-expanded={accOpen}
-                  >
-                    Chapter 1 — Introduction to the course
-                    <ChevronDown size={20} />
-                  </button>
-                  {accOpen && (
-                    <div className="cd-acc-body">
-                      {lessonRows.length === 0 && <p className="cd-muted">No lessons listed yet.</p>}
-                      {lessonRows.map((lesson, idx) => (
-                        <div key={lesson._id || idx} className="cd-lesson-row">
-                          <PlayCircle size={18} strokeWidth={2} />
-                          <span>
-                            {lesson.order != null ? `${lesson.order + 1}. ` : ''}
-                            {lesson.title}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {modules.length === 0 && <p className="cd-muted">No content listed yet.</p>}
+                {modules.map((mod, mi) => (
+                  <div key={mod._id} className="cd-module">
+                    <button
+                      type="button"
+                      className={`cd-module-header ${isModuleOpen(mod._id, mi) ? 'is-open' : ''}`}
+                      onClick={() => toggleModule(mod._id)}
+                      aria-expanded={isModuleOpen(mod._id, mi)}
+                    >
+                      <span className="cd-module-title">{mod.title}</span>
+                      <ChevronDown size={18} className="cd-module-chevron" />
+                    </button>
+                    {isModuleOpen(mod._id, mi) && (
+                      <div className="cd-module-body">
+                        {mod.lessons.map((lesson, li) => (
+                          <div key={lesson._id || li} className="cd-lesson-row">
+                            <PlaySquare size={16} className="cd-row-icon" />
+                            <span className="cd-row-title">
+                              {lesson.title}
+                            </span>
+                            <Lock size={14} className="cd-lock-icon" />
+                          </div>
+                        ))}
+                        {mod.resources.map((res, ri) => (
+                          <div key={res._id || ri} className="cd-lesson-row cd-resource-row">
+                            <FileText size={16} className="cd-row-icon" />
+                            <span className="cd-row-title">{res.name}</span>
+                            <Lock size={14} className="cd-lock-icon" />
+                          </div>
+                        ))}
+                        {mod.lessons.length === 0 && mod.resources.length === 0 && (
+                          <p className="cd-muted cd-module-empty">No content yet.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
 
