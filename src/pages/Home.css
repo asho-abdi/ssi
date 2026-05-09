@@ -1339,11 +1339,11 @@
 
 .landing-hero-slide {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   min-height: clamp(330px, 44vh, 430px);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .landing-hero-dots {

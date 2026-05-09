@@ -32,7 +32,7 @@ const envHeroSlides = (import.meta.env.VITE_HERO_IMAGES || '')
   .split(',')
   .map((x) => x.trim())
   .filter(Boolean);
-const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg'];
+const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero%201.jpg', '/hero%202.jpg'];
 const FEATURE_POINTS = [
   'Access to all courses',
   'Certificate of completion',
@@ -246,11 +246,11 @@ export function Home() {
           </div>
           <div className="landing-hero-visual">
             <div className="landing-hero-img-wrap">
-              <div
+              <img
+                key={heroSlide}
                 className="landing-hero-slide"
-                style={{ backgroundImage: `url(${HERO_SLIDES[heroSlide]})` }}
-                role="img"
-                aria-label="Learning event"
+                src={HERO_SLIDES[heroSlide]}
+                alt={`Hero slide ${heroSlide + 1}`}
               />
             </div>
             <div className="landing-hero-dots" role="tablist" aria-label="Hero images">
