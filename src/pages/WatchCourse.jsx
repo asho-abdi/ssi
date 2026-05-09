@@ -88,7 +88,7 @@ export function WatchCourse() {
               ? [...data.lessons].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
               : data.video_url
                 ? [{ _id: 'single', title: 'Lesson', video_url: data.video_url }]
-                : [];
+            : [];
         if (ls[0]) setActiveLesson(ls[0]);
       } catch {
         toast.error('Could not load course');
@@ -424,8 +424,7 @@ export function WatchCourse() {
 
   function resourceUsesSecureDownload(resource) {
     const sp = String(resource.storage_path || '');
-    const u = String(resource.url || '').trim();
-    if (u.startsWith('https://') || u.startsWith('http://')) return true;
+    const u = String(resource.url || '');
     return sp.includes('/uploads/resources/') || u.includes('/uploads/resources/');
   }
 
@@ -812,7 +811,7 @@ export function WatchCourse() {
                 return (
                   <section key={topic.id} className="watch-topic-card">
                     <button type="button" className={`watch-topic-head ${isOpen ? 'is-open' : ''}`} onClick={() => toggleTopic(topic.id)}>
-                      <div>
+          <div>
                         <strong>
                           Chapter {topicIdx + 1}: {topic.title}
                         </strong>
@@ -1032,25 +1031,25 @@ export function WatchCourse() {
           </aside>
 
           <section className="watch-main-area">
-            <div className="embed-wrap">
+              <div className="embed-wrap">
               {currentSrc ? (
-                <iframe
+                  <iframe
                   ref={playerIframeRef}
                   id="watch-player"
-                  title="lesson"
-                  src={currentSrc}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                    title="lesson"
+                    src={currentSrc}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   onLoad={registerPlayerListeners}
-                />
+                  />
               ) : (
                 <div className="watch-video-empty">This lesson video URL is invalid or unsupported.</div>
-              )}
-            </div>
+                )}
+              </div>
 
             <div className="watch-actions-row">
               <button type="button" className="btn btn-secondary watch-mark-btn" onClick={() => markLessonDone(activeLesson?._id, true)}>
-                <CheckCircle2 size={18} strokeWidth={2.2} aria-hidden />
+                  <CheckCircle2 size={18} strokeWidth={2.2} aria-hidden />
                 {currentCompleted ? 'Completed' : 'Mark as Complete'}
               </button>
               <button
@@ -1060,14 +1059,14 @@ export function WatchCourse() {
               >
                 Go to next item
                 <ArrowRight size={18} strokeWidth={2.2} aria-hidden />
-              </button>
+                </button>
             </div>
 
-            {pct >= 100 && (
+                {pct >= 100 && (
               <div className="watch-certificate-row">
                 <button type="button" className="btn btn-secondary" onClick={downloadCert}>
-                  <Award size={18} strokeWidth={2.2} aria-hidden />
-                  Download certificate
+                    <Award size={18} strokeWidth={2.2} aria-hidden />
+                    Download certificate
                 </button>
               </div>
             )}
@@ -1133,10 +1132,10 @@ export function WatchCourse() {
             onClick={() => setReviewOpen((prev) => !prev)}
             aria-expanded={reviewOpen}
           >
-            <h3>
-              <Star size={18} strokeWidth={2.2} aria-hidden />
-              Rate this course
-            </h3>
+          <h3>
+            <Star size={18} strokeWidth={2.2} aria-hidden />
+            Rate this course
+          </h3>
             <ChevronRight size={16} className={reviewOpen ? 'is-open' : ''} />
           </button>
           {reviewOpen && <form onSubmit={submitReview} className="watch-review-form">
@@ -1268,8 +1267,8 @@ export function WatchCourse() {
                 </select>
                 <button type="submit" className="btn btn-primary" disabled={announcementSubmitting}>
                   {announcementSubmitting ? 'Publishing...' : 'Publish'}
-                </button>
-              </form>
+            </button>
+          </form>
             ) : null}
 
             {(courseAnnouncements || []).map((item) => (

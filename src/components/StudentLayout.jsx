@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Award, BookOpen, LogOut, UserCircle } from 'lucide-react';
+import { Award, BookOpen, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AnnouncementBell } from './AnnouncementBell';
 import { SSILogo } from './SSILogo';
@@ -22,10 +22,6 @@ export function StudentLayout() {
             <NavLink to="/student/courses" className={navBase} end>
               <BookOpen size={16} aria-hidden />
               My Courses
-            </NavLink>
-            <NavLink to="/student/profile" className={navBase}>
-              <UserCircle size={16} aria-hidden />
-              Profile
             </NavLink>
             <NavLink to="/student/certificates" className={navBase}>
               <Award size={16} aria-hidden />

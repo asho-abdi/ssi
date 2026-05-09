@@ -88,7 +88,7 @@ export function AdminSettings() {
     return Math.max(0, Math.min(100, num));
   }
 
-  async function uploadImage(urlPath, fileIdPath) {
+  async function uploadImage(path) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp';
@@ -97,13 +97,12 @@ export function AdminSettings() {
       if (!file) return;
       const fd = new FormData();
       fd.append('image', file);
-      setUploadingField(urlPath);
+      setUploadingField(path);
       try {
         const { data } = await api.post('/uploads/images', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        updateField(urlPath, data.url || '');
-        updateField(fileIdPath, data.fileId || '');
+        updateField(path, data.url || '');
         toast.success('Image uploaded');
       } catch (err) {
         toast.error(err.response?.data?.message || 'Upload failed');
@@ -239,7 +238,7 @@ export function AdminSettings() {
                 <div>
                   <label className="label">Logo upload</label>
                   <div className="as-upload-actions">
-                    <button type="button" className="btn btn-ghost" onClick={() => uploadImage('logo_url', 'logo_file_id')}>
+                    <button type="button" className="btn btn-ghost" onClick={() => uploadImage('logo_url')}>
                       {uploadingField === 'logo_url' ? 'Uploading...' : 'Upload Logo'}
                     </button>
                     {getByPath(sectionData, 'logo_url') && <img src={getByPath(sectionData, 'logo_url')} alt="Logo preview" className="as-preview" />}
@@ -250,7 +249,7 @@ export function AdminSettings() {
                 <div>
                   <label className="label">Favicon upload</label>
                   <div className="as-upload-actions">
-                    <button type="button" className="btn btn-ghost" onClick={() => uploadImage('favicon_url', 'favicon_file_id')}>
+                    <button type="button" className="btn btn-ghost" onClick={() => uploadImage('favicon_url')}>
                       {uploadingField === 'favicon_url' ? 'Uploading...' : 'Upload Favicon'}
                     </button>
                     {getByPath(sectionData, 'favicon_url') && <img src={getByPath(sectionData, 'favicon_url')} alt="Favicon preview" className="as-preview" />}

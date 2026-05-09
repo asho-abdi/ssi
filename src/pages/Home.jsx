@@ -23,7 +23,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
-import { resolveMediaUrl, normalizeImageUrl } from '../utils/mediaUrl';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
@@ -354,12 +354,8 @@ export function Home() {
             {filtered.map((c) => {
               const { first, second } = splitTitleForBanner(c.title);
               const teacherName = c.teacher_id?.name || 'Instructor';
-              const teacherAvatar = normalizeImageUrl(c.teacher_id?.avatar_url, { width: 128, quality: 80 });
-              const avatar =
-                teacherAvatar ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
-              const courseThumbRaw = resolveMediaUrl(c.thumbnail) || '';
-              const courseThumb = courseThumbRaw ? normalizeImageUrl(courseThumbRaw, { width: 800, quality: 85 }) : '';
+              const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=128`;
+              const courseThumb = resolveMediaUrl(c.thumbnail) || '';
               const inCart = isInCart(c._id);
               const displayPrice = getCoursePrice(c);
               const hasSale = displayPrice < Number(c.price || 0);

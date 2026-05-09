@@ -16,7 +16,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
 import { toEmbedSrc } from '../utils/embed';
-import { resolveMediaUrl, normalizeImageUrl } from '../utils/mediaUrl';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import './CourseDetail.css';
 
 function splitBannerTitle(title) {
@@ -170,13 +170,9 @@ export function CourseDetail() {
   const { line1, line2 } = splitBannerTitle(course.title);
   const bannerThumbUrl = resolveMediaUrl(course.thumbnail);
   const hasUploadedBanner = Boolean(bannerThumbUrl);
-  const bannerThumbOptimized = bannerThumbUrl ? normalizeImageUrl(bannerThumbUrl, { width: 1400, quality: 85 }) : '';
   const previewEmbedSrc = toEmbedSrc(course.video_url || lessonRows[0]?.video_url || '');
   const teacherName = course.teacher_id?.name || 'Instructor';
-  const teacherAvatar = normalizeImageUrl(course.teacher_id?.avatar_url, { width: 256, quality: 85 });
-  const avatarUrl =
-    teacherAvatar ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=256`;
+  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=256`;
   const updated = course.updatedAt ? new Date(course.updatedAt) : null;
   const displayPrice = getCoursePrice(course);
   const hasSale = displayPrice < Number(course.price || 0);
@@ -219,7 +215,7 @@ export function CourseDetail() {
               className="cd-banner-media"
               role="img"
               aria-label={course.title}
-              style={{ backgroundImage: `url(${bannerThumbOptimized})` }}
+              style={{ backgroundImage: `url(${bannerThumbUrl})` }}
             />
           ) : (
             <div className="cd-banner-inner">

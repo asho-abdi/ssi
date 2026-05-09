@@ -38,7 +38,6 @@ function dashboardHeaderMeta(pathname) {
     { startsWith: '/dashboard/admin/payments', title: 'Payments', subtitle: 'Track transactions and payment proofs' },
     { startsWith: '/dashboard/admin/reports', title: 'Reports', subtitle: 'Analyze revenue, users, and course performance' },
     { startsWith: '/dashboard/admin/settings', title: 'Settings', subtitle: 'Configure platform and monetization options' },
-    { startsWith: '/dashboard/admin/profile', title: 'Account profile', subtitle: 'Your name, email, and photo' },
     { startsWith: '/dashboard/admin/announcements', title: 'Announcements', subtitle: 'Publish dashboard communication updates' },
     { startsWith: '/dashboard/admin/reviews', title: 'Reviews', subtitle: 'Moderate student feedback and ratings' },
     { startsWith: '/dashboard/admin/certificates', title: 'Certificates', subtitle: 'Create and manage completion certificates' },
@@ -47,7 +46,6 @@ function dashboardHeaderMeta(pathname) {
     { startsWith: '/dashboard/teacher/earnings', title: 'Earnings', subtitle: 'Revenue trends and payout overview' },
     { startsWith: '/dashboard/teacher/profile', title: 'Instructor Profile', subtitle: 'Update your profile and public information' },
     { startsWith: '/dashboard/editor/courses', title: 'Editor Workspace', subtitle: 'Review and update course content' },
-    { startsWith: '/dashboard/editor/profile', title: 'Account profile', subtitle: 'Your name, email, and photo' },
     { startsWith: '/dashboard/admin', title: 'Admin Overview', subtitle: 'System health and key platform metrics' },
   ];
   return rules.find((rule) => pathname.startsWith(rule.startsWith)) || { title: 'Dashboard', subtitle: 'Your workspace overview' };
@@ -152,7 +150,6 @@ function SidebarContent({ role, onNavigate }) {
               )}
             </div>
             {link('/dashboard/admin/settings', <Settings size={20} />, 'Settings')}
-            {link('/dashboard/admin/profile', <UserCircle size={20} />, 'Profile')}
           </>
         )}
         {role === 'teacher' && (
@@ -168,7 +165,6 @@ function SidebarContent({ role, onNavigate }) {
         {role === 'editor' && (
           <>
             {(hasPermission('editCourse') || hasPermission('manageLessons')) && link('/dashboard/editor/courses', <PenLine size={20} />, 'Courses')}
-            {link('/dashboard/editor/profile', <UserCircle size={20} />, 'Profile')}
             {link('/dashboard/notifications', <Bell size={20} />, 'Notifications')}
           </>
         )}

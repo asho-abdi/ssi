@@ -34,9 +34,7 @@ import { TeacherCourses } from './pages/dashboard/TeacherCourses';
 import { TeacherEarnings } from './pages/dashboard/TeacherEarnings';
 import { TeacherProfile } from './pages/dashboard/TeacherProfile';
 import { EditorCourses } from './pages/dashboard/EditorCourses';
-import { StaffProfile } from './pages/dashboard/StaffProfile';
 import { StudentCourses } from './pages/dashboard/StudentCourses';
-import { StudentProfile } from './pages/dashboard/StudentProfile';
 import { StudentCertificates } from './pages/dashboard/StudentCertificates';
 import { NotificationsCenter } from './pages/dashboard/NotificationsCenter';
 
@@ -100,7 +98,6 @@ export default function App() {
           <Route path="admin/settings" element={<AdminSettings />} />
           <Route path="admin/reviews" element={<AdminReviews />} />
           <Route path="admin/certificates" element={<AdminCertificates />} />
-          <Route path="admin/profile" element={<StaffProfile />} />
         </Route>
         <Route element={<RoleRoute roles={['teacher']} />}>
           <Route path="teacher/courses" element={<TeacherCourses />} />
@@ -111,7 +108,6 @@ export default function App() {
         <Route element={<RoleRoute roles={['editor']} />}>
           <Route path="editor/courses" element={<EditorCourses />} />
           <Route path="editor/courses/new" element={<EditorCourses />} />
-          <Route path="editor/profile" element={<StaffProfile />} />
         </Route>
       </Route>
 
@@ -124,7 +120,6 @@ export default function App() {
         }
       >
         <Route path="courses" element={<StudentCourses />} />
-        <Route path="profile" element={<StudentProfile />} />
         <Route path="certificates" element={<StudentCertificates />} />
       </Route>
 
