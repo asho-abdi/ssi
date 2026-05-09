@@ -24,8 +24,8 @@ function FallbackWordmark({ full, className, alt }) {
 }
 
 const SRC_CHAINS = {
-  full: ['/logo-full.png', '/logo-full.svg'],
-  mark: ['/logo-mark.png', '/logo-mark.svg'],
+  full: ['/logo-full.svg', '/logo-full.png'],
+  mark: ['/logo-mark.svg', '/logo-mark.png'],
 };
 
 export function SSILogo({ full = true, className = '', withLink = true }) {

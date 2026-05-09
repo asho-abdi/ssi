@@ -21,7 +21,7 @@ import { resolveMediaUrl } from '../../utils/mediaUrl';
 
 const emptyLesson = { title: '', video_url: '', order: 0 };
 const emptyAssignment = { title: '', description: '', due_date: '', points: 100 };
-const emptyResource = { name: '', url: '', file_type: 'other', size_bytes: 0, storage_path: '' };
+const emptyResource = { name: '', url: '', file_type: 'other', size_bytes: 0, storage_path: '', imagekit_file_id: '' };
 const emptyQuizQuestion = {
   question: '',
   question_type: 'circle_right_answer',
@@ -165,6 +165,7 @@ export function CourseManager({ mode = 'editor' }) {
     difficulty_level: 'all',
     duration: '',
     thumbnail: '',
+    thumbnail_file_id: '',
     video_url: '',
     category_id: '',
     teacher_id: '',
@@ -295,6 +296,7 @@ export function CourseManager({ mode = 'editor' }) {
       difficulty_level: 'all',
       duration: '',
       thumbnail: '',
+      thumbnail_file_id: '',
       video_url: '',
       category_id: categories[0]?._id || '',
       teacher_id: isTeacher ? user?._id || '' : teachers[0]?._id || '',
@@ -448,6 +450,7 @@ export function CourseManager({ mode = 'editor' }) {
                       file_type: resource?.file_type || 'other',
                       size_bytes: Number(resource?.size_bytes) || 0,
                       storage_path: String(resource?.storage_path || ''),
+                      imagekit_file_id: String(resource?.imagekit_file_id || ''),
                     }))
                 : [],
             }),
@@ -463,6 +466,7 @@ export function CourseManager({ mode = 'editor' }) {
       difficulty_level: c.difficulty_level || 'all',
       duration: String(c.duration),
       thumbnail: c.thumbnail || '',
+      thumbnail_file_id: c.thumbnail_file_id || '',
       video_url: c.video_url || '',
       category_id: c.category_id?._id || c.category_id || '',
       teacher_id: c.teacher_id?._id || c.teacher_id || '',
@@ -476,6 +480,7 @@ export function CourseManager({ mode = 'editor' }) {
               file_type: resource?.file_type || 'other',
               size_bytes: Number(resource?.size_bytes) || 0,
               storage_path: String(resource?.storage_path || ''),
+              imagekit_file_id: String(resource?.imagekit_file_id || ''),
             })
           )
         : [],
@@ -839,6 +844,7 @@ export function CourseManager({ mode = 'editor' }) {
         file_type: uploaded.file_type || 'other',
         size_bytes: Number(uploaded.size_bytes ?? uploaded.size) || 0,
         storage_path: String(uploaded.storage_path || uploaded.path || ''),
+        imagekit_file_id: String(uploaded.fileId || '').trim(),
       };
       if (target.scope === 'topic') {
         setTopicResourceAt(target.topicIdx, target.resourceIdx, patch);
@@ -877,6 +883,7 @@ export function CourseManager({ mode = 'editor' }) {
       setForm((prev) => ({
         ...prev,
         thumbnail: upload.url || '',
+        thumbnail_file_id: String(upload.fileId || '').trim(),
       }));
       toast.success('Thumbnail uploaded');
     } catch (err) {
@@ -1032,6 +1039,7 @@ export function CourseManager({ mode = 'editor' }) {
           file_type: resource.file_type || 'other',
           size_bytes: Number.isFinite(Number(resource.size_bytes)) ? Math.max(0, Math.floor(Number(resource.size_bytes))) : 0,
           storage_path: String(resource.storage_path || '').trim(),
+          imagekit_file_id: String(resource.imagekit_file_id || '').trim(),
         }))
         .filter((resource) => resource.name && resource.url);
       if (normalizedResources.length > 0) {
@@ -1060,6 +1068,7 @@ export function CourseManager({ mode = 'editor' }) {
         file_type: resource.file_type || 'other',
         size_bytes: Number.isFinite(Number(resource.size_bytes)) ? Math.max(0, Math.floor(Number(resource.size_bytes))) : 0,
         storage_path: String(resource.storage_path || '').trim(),
+        imagekit_file_id: String(resource.imagekit_file_id || '').trim(),
       }))
       .filter((resource) => resource.name && resource.url);
 
@@ -1071,6 +1080,7 @@ export function CourseManager({ mode = 'editor' }) {
       difficulty_level: form.difficulty_level || 'all',
       duration: Number(form.duration),
       thumbnail: form.thumbnail,
+      thumbnail_file_id: form.thumbnail_file_id || '',
       video_url: form.video_url,
       category_id: form.category_id || null,
       lessons: flattenedLessons,
