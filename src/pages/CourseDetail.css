@@ -317,26 +317,23 @@
   padding: 0.7rem 1.1rem;
   border-bottom: 1px solid #f1f5f9;
   font-size: 0.9rem;
-  color: #334155;
+  color: #94a3b8;
   font-weight: 400;
-  transition: background 0.12s ease;
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
 .cd-lesson-row:last-child {
   border-bottom: none;
 }
 
-.cd-lesson-row:hover {
-  background: #f8fafc;
-}
-
 .cd-row-icon {
   flex-shrink: 0;
-  color: #64748b;
+  color: #cbd5e1;
 }
 
 .cd-resource-row .cd-row-icon {
-  color: #64748b;
+  color: #cbd5e1;
 }
 
 .cd-row-title {
@@ -346,7 +343,7 @@
 
 .cd-lock-icon {
   flex-shrink: 0;
-  color: #94a3b8;
+  color: #cbd5e1;
   margin-left: auto;
 }
 
