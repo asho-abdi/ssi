@@ -17,7 +17,6 @@ export function TeacherProfile() {
     phone: '',
     bio: '',
     avatarUrl: '',
-    avatarFileId: '',
   });
   const [social, setSocial] = useState({
     facebook: '',
@@ -61,7 +60,6 @@ export function TeacherProfile() {
           phone: me.phone || '',
           bio: me.bio || '',
           avatarUrl: me.avatar_url || '',
-          avatarFileId: me.avatar_file_id || '',
         }));
         setSocial({
           facebook: me.social?.facebook || '',
@@ -99,7 +97,6 @@ export function TeacherProfile() {
         phone: profile.phone,
         bio: profile.bio,
         avatar_url: profile.avatarUrl,
-        avatar_file_id: profile.avatarFileId,
         social: {
           facebook: social.facebook,
           linkedin: social.linkedin,
@@ -177,12 +174,10 @@ export function TeacherProfile() {
         const nextProfile = {
           ...profile,
           avatarUrl: data.url || '',
-          avatarFileId: String(data.fileId || '').trim(),
         };
         setProfile(nextProfile);
         await api.patch('/auth/profile', {
           avatar_url: nextProfile.avatarUrl,
-          avatar_file_id: nextProfile.avatarFileId,
         });
         await refreshUser();
         toast.success('Avatar updated');
@@ -224,7 +219,7 @@ export function TeacherProfile() {
                 width={220}
                 height={220}
                 quality={85}
-                fallback="/logo-mark.svg"
+                fallback="/logo-mark.png"
               />
             ) : (
               <div className="tp-avatar-fallback">

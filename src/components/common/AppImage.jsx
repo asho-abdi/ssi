@@ -5,7 +5,7 @@ const DEFAULT_PLACEHOLDER = '/placeholder-course.svg';
 
 /**
  * Reusable image component used across the app.
- * - Normalizes URLs for localhost / Railway legacy paths / ImageKit transforms
+ * - Normalizes URLs for localhost / legacy upload paths
  * - Handles broken URLs with fallback placeholder
  * - Supports lazy loading and a basic loading skeleton state
  */

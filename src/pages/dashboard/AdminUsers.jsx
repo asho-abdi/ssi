@@ -322,7 +322,7 @@ export function AdminUsers({ initialRoleFilter = 'student' }) {
                             width={88}
                             height={88}
                             quality={80}
-                            fallback="/logo-mark.svg"
+                            fallback="/logo-mark.png"
                           />
                         ) : (
                           <span className="au-avatar">{initials(u.name)}</span>

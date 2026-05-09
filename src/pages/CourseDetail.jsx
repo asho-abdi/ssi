@@ -175,7 +175,7 @@ export function CourseDetail() {
   const previewEmbedSrc = toEmbedSrc(course.video_url || lessonRows[0]?.video_url || '');
   const teacherName = course.teacher_id?.name || 'Instructor';
   const teacherAvatar = normalizeImageUrl(course.teacher_id?.avatar_url, { width: 256, quality: 85, fallback: '' });
-  const avatarUrl = teacherAvatar || '/logo-mark.svg';
+  const avatarUrl = teacherAvatar || '/logo-mark.png';
   const updated = course.updatedAt ? new Date(course.updatedAt) : null;
   const displayPrice = getCoursePrice(course);
   const hasSale = displayPrice < Number(course.price || 0);
@@ -229,7 +229,7 @@ export function CourseDetail() {
                 </h1>
                 <span className="cd-join-pill">JOIN OUR COURSE</span>
               </div>
-              <AppImage className="cd-banner-avatar" src={avatarUrl} alt="" width={120} height={120} quality={80} fallback="/logo-mark.svg" />
+              <AppImage className="cd-banner-avatar" src={avatarUrl} alt="" width={120} height={120} quality={80} fallback="/logo-mark.png" />
             </div>
           )}
         </section>
@@ -438,7 +438,7 @@ export function CourseDetail() {
             <div className="cd-side-card">
               <p className="cd-instructor-label">A course by</p>
               <div className="cd-instructor-row">
-                <AppImage src={avatarUrl} alt="" width={52} height={52} quality={80} fallback="/logo-mark.svg" />
+                <AppImage src={avatarUrl} alt="" width={52} height={52} quality={80} fallback="/logo-mark.png" />
                 <div>
                   <strong>{teacherName}</strong>
                   <span className="cd-muted cd-instructor-subtitle">

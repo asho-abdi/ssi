@@ -7,16 +7,17 @@ import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
+const EVENT_FALLBACKS = ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg', '/placeholder-course.svg'];
 
 const EVENT_ITEMS = [
-  { id: 1, title: 'NGO Management', day: '20', month: 'Aug', tag: 'Seminar', image: '/events/event-1.png' },
+  { id: 1, title: 'NGO Management', day: '20', month: 'Aug', tag: 'Seminar', image: '/hero-1.svg' },
   {
     id: 2,
     title: 'Fagaare ka hadalka (Public Speaking)',
     day: '12',
     month: 'Jul',
     tag: 'Seminar',
-    image: '/events/event-2.png',
+    image: '/hero-2.svg',
   },
   {
     id: 3,
@@ -24,17 +25,17 @@ const EVENT_ITEMS = [
     day: '21',
     month: 'Feb',
     tag: 'Seminar',
-    image: '/events/event-3.png',
+    image: '/hero-3.svg',
   },
-  { id: 4, title: 'Acquiring Life Skills', day: '12', month: 'Jul', tag: 'Seminar', image: '/events/event-5.png' },
-  { id: 5, title: 'Office Management Skills', day: '15', month: 'Jun', tag: 'Seminar', image: '/events/event-6.png' },
+  { id: 4, title: 'Acquiring Life Skills', day: '12', month: 'Jul', tag: 'Seminar', image: '/hero-1.svg' },
+  { id: 5, title: 'Office Management Skills', day: '15', month: 'Jun', tag: 'Seminar', image: '/hero-2.svg' },
   {
     id: 6,
     title: 'Project Management',
     day: '27',
     month: 'Jan',
     tag: 'Uncategorized',
-    image: '/events/event-project-management.png',
+    image: '/hero-3.svg',
   },
   {
     id: 7,
@@ -42,9 +43,9 @@ const EVENT_ITEMS = [
     day: '05',
     month: 'Jan',
     tag: 'Seminar',
-    image: '/events/event-personal-strategic-plan.png',
+    image: '/hero-1.svg',
   },
-  { id: 8, title: 'Dood Wadaag', day: '27', month: 'Dec', tag: 'Dood', image: '/events/event-dood-wadaag.png' },
+  { id: 8, title: 'Dood Wadaag', day: '27', month: 'Dec', tag: 'Dood', image: '/hero-2.svg' },
 ];
 
 export function Events() {
@@ -106,7 +107,7 @@ export function Events() {
       <main className="bg-gradient-to-b from-[#f8fbff] to-[#edf2f7]">
         <section
           className="relative flex min-h-[430px] items-center bg-cover bg-no-repeat md:[background-position:center_24%] [background-position:center_18%]"
-          style={{ backgroundImage: "url('/events/event-1.png')" }}
+          style={{ backgroundImage: "url('/hero-1.svg')" }}
         >
           <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(19,41,74,0.9),rgba(19,41,74,0.45))]" />
           <div className="landing-inner relative z-[1] flex w-full flex-col items-center px-4 py-8 text-center text-white">
@@ -163,7 +164,7 @@ export function Events() {
                     <AppImage
                       src={item.image}
                       alt={item.title}
-                      fallback="/placeholder-course.svg"
+                      fallback={EVENT_FALLBACKS[item.id % EVENT_FALLBACKS.length]}
                       width={840}
                       quality={82}
                       className="block h-[212px] w-full object-cover object-center"

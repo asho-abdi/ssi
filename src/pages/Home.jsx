@@ -33,7 +33,7 @@ const envHeroSlides = (import.meta.env.VITE_HERO_IMAGES || '')
   .split(',')
   .map((x) => x.trim())
   .filter(Boolean);
-const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg'];
+const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero-ssi-1.png', '/hero-ssi-2.png'];
 const FEATURE_POINTS = [
   'Access to all courses',
   'Certificate of completion',
@@ -356,8 +356,8 @@ export function Home() {
               const { first, second } = splitTitleForBanner(c.title);
               const teacherName = c.teacher_id?.name || 'Instructor';
               const teacherAvatar = normalizeImageUrl(c.teacher_id?.avatar_url, { width: 160, quality: 80, fallback: '' });
-              const avatar = teacherAvatar || '/logo-mark.svg';
-              const courseThumb = resolveMediaUrl(c.thumbnail) || '';
+              const avatar = teacherAvatar || '/logo-mark.png';
+              const courseThumb = resolveMediaUrl(c.thumbnail) || '/placeholder-course.svg';
               const inCart = isInCart(c._id);
               const displayPrice = getCoursePrice(c);
               const hasSale = displayPrice < Number(c.price || 0);
@@ -387,7 +387,7 @@ export function Home() {
                             </p>
                             <span className="landing-course-join">JOIN OUR COURSE</span>
                           </div>
-                          <AppImage className="landing-course-avatar" src={avatar} alt="" width={64} height={64} quality={80} fallback="/logo-mark.svg" />
+                          <AppImage className="landing-course-avatar" src={avatar} alt="" width={64} height={64} quality={80} fallback="/logo-mark.png" />
                         </div>
                       )}
                     </div>
