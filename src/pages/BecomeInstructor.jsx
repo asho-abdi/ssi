@@ -264,7 +264,7 @@ export function BecomeInstructor() {
         <div className="bi-strip-inner">
           <div className="bi-strip-visual">
             <img
-              src="/become-instructor/visit-connect.png"
+              src="/connect.jpg"
               alt="Instructor speaking at a Success Skills Institute seminar"
             />
           </div>
