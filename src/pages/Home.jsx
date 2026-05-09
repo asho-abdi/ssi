@@ -28,12 +28,7 @@ import { normalizeImageUrl, resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
 const WA_LINK = 'https://wa.me/252615942611';
-/** Local assets in `frontend/public/`; optional override: `VITE_HERO_IMAGES` = comma-separated URLs */
-const envHeroSlides = (import.meta.env.VITE_HERO_IMAGES || '')
-  .split(',')
-  .map((x) => x.trim())
-  .filter(Boolean);
-const HERO_SLIDES = envHeroSlides.length ? envHeroSlides : ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg'];
+const HERO_SLIDES = ['/hero-1.svg', '/hero-2.svg', '/hero-3.svg'];
 const FEATURE_POINTS = [
   'Access to all courses',
   'Certificate of completion',
