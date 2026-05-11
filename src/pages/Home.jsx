@@ -580,7 +580,7 @@ export function Home() {
               Browse Courses <ArrowRight size={17} />
             </a>
             <Link to="/register" className="lp-btn-cta-ghost">
-              Create Free Account
+              Enroll Now
             </Link>
           </div>
         </div>
