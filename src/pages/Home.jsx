@@ -274,19 +274,19 @@ export function Home() {
               </div>
               <div className="lp-trust-divider" />
               <div className="lp-trust-badge">
-                <Users size={15} color="rgba(255,255,255,0.8)" />
+                <Users size={15} color="#fff" />
                 <strong>500+</strong>
                 <span>Students</span>
               </div>
               <div className="lp-trust-divider" />
               <div className="lp-trust-badge">
-                <BookOpen size={15} color="rgba(255,255,255,0.8)" />
+                <BookOpen size={15} color="#fff" />
                 <strong>15+</strong>
                 <span>Courses</span>
               </div>
               <div className="lp-trust-divider" />
               <div className="lp-trust-badge">
-                <Trophy size={15} color="rgba(255,255,255,0.8)" />
+                <Trophy size={15} color="#fff" />
                 <strong>100%</strong>
                 <span>Certified</span>
               </div>
