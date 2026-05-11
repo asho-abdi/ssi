@@ -169,9 +169,6 @@ export function Home() {
             <Link to="/events">
               Events
             </Link>
-            <Link to="/offline-enrollment">
-              Offline Enrollment
-            </Link>
             <a href="#footer-contact">
               Contacts
             </a>
@@ -528,9 +525,6 @@ export function Home() {
               </li>
               <li>
                 <Link to="/events">Events</Link>
-              </li>
-              <li>
-                <Link to="/offline-enrollment">Offline Enrollment</Link>
               </li>
             </ul>
           </div>

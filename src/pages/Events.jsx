@@ -69,7 +69,6 @@ export function Events() {
             <Link to="/events" className="is-active">
               Events
             </Link>
-            <Link to="/offline-enrollment">Offline Enrollment</Link>
             <a href="#footer-contact">Contacts</a>
           </nav>
           <div className="landing-header-actions">

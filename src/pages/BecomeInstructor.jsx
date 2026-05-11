@@ -87,9 +87,6 @@ export function BecomeInstructor() {
             <Link to="/events">
               Events
             </Link>
-            <Link to="/offline-enrollment">
-              Offline Enrollment
-            </Link>
             <a href="/#footer-contact">
               Contacts
             </a>
