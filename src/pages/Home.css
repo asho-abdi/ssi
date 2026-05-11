@@ -846,6 +846,12 @@
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .lp-footer-brand {}
+/* Make logo visible on dark footer background */
+.lp-footer .landing-logo-full,
+.lp-footer .landing-logo-mark {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
 .lp-footer-tagline {
   font-size: 0.88rem;
   color: rgba(255,255,255,0.5);
