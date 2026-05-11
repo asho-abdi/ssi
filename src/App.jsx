@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Events } from './pages/Events';
 import { OfflineEnrollment } from './pages/OfflineEnrollment';
 import { BecomeInstructor } from './pages/BecomeInstructor';
+import { Contact } from './pages/Contact';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { ForgotPassword } from './pages/ForgotPassword';
@@ -47,6 +48,7 @@ export default function App() {
       <Route path="/events" element={<Events />} />
       <Route path="/offline-enrollment" element={<OfflineEnrollment />} />
       <Route path="/become-instructor" element={<BecomeInstructor />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

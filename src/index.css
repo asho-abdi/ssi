@@ -333,6 +333,26 @@ a.btn {
   background: color-mix(in srgb, var(--primary) 6%, transparent);
 }
 
+/* ── Shared logo sizing (used by SSILogo on all pages) ─────────────── */
+.landing-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.landing-logo-full {
+  height: 38px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+.landing-logo-mark {
+  height: 34px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
 @keyframes page-enter {
   from {
     opacity: 0;
