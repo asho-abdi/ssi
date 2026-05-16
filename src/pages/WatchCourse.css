@@ -4,7 +4,7 @@
 }
 
 .watch-inner {
-  max-width: 1540px;
+  max-width: 1700px;
   margin: 0 auto;
   padding: 0.55rem 0.65rem 1.5rem;
 }
@@ -60,7 +60,7 @@
 .watch-layout {
   margin-top: 0;
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 0.6rem;
   align-items: start;
 }
@@ -404,17 +404,19 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  order: 1; /* Video panel appears FIRST (left column) */
 }
+.watch-side-card { order: 2; } /* Sidebar appears SECOND (right column) */
 
 .embed-wrap {
   width: 100%;
   margin: 0;
   aspect-ratio: 16 / 9;
   background: #0a1220;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: none;
-  border: 1px solid #ccd5e3;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  border: none;
 }
 
 .embed-wrap iframe {
@@ -865,12 +867,12 @@
   }
 
   .watch-main-area {
-    order: 1;
+    order: 1 !important;
   }
 
   .watch-side-card {
     position: static;
-    order: 2;
+    order: 2 !important;
     height: auto;
     min-height: 0;
   }

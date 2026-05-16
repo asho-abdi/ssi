@@ -20,6 +20,7 @@ import {
   Award,
   Bell,
   ClipboardList,
+  RotateCcw,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -43,6 +44,8 @@ function dashboardHeaderMeta(pathname) {
     { startsWith: '/dashboard/admin/reviews', title: 'Reviews', subtitle: 'Moderate student feedback and ratings' },
     { startsWith: '/dashboard/admin/certificates', title: 'Certificates', subtitle: 'Create and manage completion certificates' },
     { startsWith: '/dashboard/admin/offline-enrollments', title: 'Offline Enrollments', subtitle: 'Manage in-person class registrations and attendance' },
+    { startsWith: '/dashboard/admin/refunds', title: 'Refunds', subtitle: 'Review and manage student refund requests' },
+    { startsWith: '/dashboard/admin/commissions', title: 'Commissions', subtitle: 'Revenue sharing, instructor earnings, and platform income' },
     { startsWith: '/dashboard/notifications', title: 'Notifications', subtitle: 'Announcements, thread updates, and course alerts' },
     { startsWith: '/dashboard/teacher/courses', title: 'Instructor Courses', subtitle: 'Build and edit your learning products' },
     { startsWith: '/dashboard/teacher/earnings', title: 'Earnings', subtitle: 'Revenue trends and payout overview' },
@@ -121,6 +124,8 @@ function SidebarContent({ role, onNavigate }) {
             {link('/dashboard/admin/reviews', <MessageSquareText size={20} />, 'Reviews')}
             {link('/dashboard/admin/certificates', <FileCheck2 size={20} />, 'Certificates')}
             {link('/dashboard/admin/offline-enrollments', <ClipboardList size={20} />, 'Offline Enrollments')}
+            {link('/dashboard/admin/refunds', <RotateCcw size={20} />, 'Refunds')}
+            {link('/dashboard/admin/commissions', <DollarSign size={20} />, 'Commissions')}
             {link('/dashboard/notifications', <Bell size={20} />, 'Notifications')}
             <div className={`dash-users-dropdown ${usersPathActive ? 'active' : ''}`}>
               <button

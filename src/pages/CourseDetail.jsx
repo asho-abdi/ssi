@@ -415,16 +415,9 @@ export function CourseDetail() {
                 </>
               )}
               {showCheckoutActions && (
-                <>
-                  {(!user || user?.role === 'student') && (
-                    <button type="button" className="cd-btn-outline" onClick={onToggleCart}>
-                      {isInCart ? 'Remove from cart' : 'Add to cart'}
-                    </button>
-                  )}
-                  <Link to={canBuy ? `/checkout/${course._id}` : '/login'} className="cd-btn-primary">
-                    {isInCart ? 'Checkout now' : 'Checkout'}
-                  </Link>
-                </>
+                <Link to={canBuy ? `/checkout/${course._id}` : '/login'} className="cd-btn-primary cd-btn-buy">
+                  Buy Course — ${displayPrice.toFixed(2)}
+                </Link>
               )}
               {isPending && <p className="cd-aside-note">Enrollment pending. Submit payment details to continue.</p>}
               {isPendingVerification && <p className="cd-aside-note">Payment proof submitted. Waiting for admin verification.</p>}

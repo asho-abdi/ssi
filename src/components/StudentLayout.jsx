@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Award, BookOpen, LogOut } from 'lucide-react';
+import { Award, BookOpen, LogOut, RotateCcw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AnnouncementBell } from './AnnouncementBell';
 import { SSILogo } from './SSILogo';
@@ -26,6 +26,10 @@ export function StudentLayout() {
             <NavLink to="/student/certificates" className={navBase}>
               <Award size={16} aria-hidden />
               Certificates
+            </NavLink>
+            <NavLink to="/student/refunds" className={navBase}>
+              <RotateCcw size={16} aria-hidden />
+              Refunds
             </NavLink>
           </nav>
           <div className="student-actions">

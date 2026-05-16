@@ -10,7 +10,6 @@ import {
   Clock,
   Facebook,
   GraduationCap,
-  Heart,
   Instagram,
   Layers,
   Linkedin,
@@ -32,7 +31,7 @@ import toast from 'react-hot-toast';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
-import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
+import { getCartIds } from '../utils/cart';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
@@ -131,8 +130,10 @@ export function Home() {
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('newest');
   const [heroSlide, setHeroSlide] = useState(0);
-  const [cartIds, setCartIds] = useState(() => getCartIds());
+  const [cartIds] = useState(() => getCartIds());
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     document.body.style.background = '#fff';
@@ -160,6 +161,14 @@ export function Home() {
     if (category !== 'all') {
       list = list.filter((c) => String(c.category_id?._id || c.category_id) === String(category));
     }
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter((c) =>
+        String(c.title || '').toLowerCase().includes(q) ||
+        String(c.teacher_id?.name || '').toLowerCase().includes(q) ||
+        String(c.description || '').toLowerCase().includes(q)
+      );
+    }
     const sorted = [...list];
     if (sort === 'newest') sorted.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     else if (sort === 'oldest') sorted.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
@@ -168,19 +177,8 @@ export function Home() {
     else if (sort === 'title-asc') sorted.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
     else if (sort === 'title-desc') sorted.sort((a, b) => String(b.title || '').localeCompare(String(a.title || '')));
     return sorted;
-  }, [courses, category, sort]);
+  }, [courses, category, sort, search]);
 
-  function isInCart(id) { return cartIds.includes(String(id)); }
-
-  function onToggleCart(courseId) {
-    if (isInCart(courseId)) {
-      setCartIds(removeFromCart(courseId));
-      toast.success('Removed from cart');
-    } else {
-      setCartIds(addToCart(courseId));
-      toast.success('Added to cart');
-    }
-  }
 
   return (
     <div className="lp-root">
@@ -258,6 +256,20 @@ export function Home() {
               Join thousands of professionals upgrading their careers through
               practical, certificate-backed courses from SSI — anytime, anywhere.
             </p>
+            <form
+              className="lp-hero-search"
+              onSubmit={(e) => { e.preventDefault(); setSearch(searchInput); document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' }); }}
+            >
+              <Search size={18} className="lp-hero-search-icon" />
+              <input
+                type="text"
+                className="lp-hero-search-input"
+                placeholder="Search courses, skills, instructors…"
+                value={searchInput}
+                onChange={(e) => { setSearchInput(e.target.value); setSearch(e.target.value); }}
+              />
+              <button type="submit" className="lp-hero-search-btn">Search</button>
+            </form>
             <div className="lp-hero-actions">
               <a href="#catalog" className="lp-btn-hero-primary">
                 Explore Courses <ArrowRight size={18} />
@@ -380,10 +392,19 @@ export function Home() {
         <div className="lp-container">
           <div className="lp-section-head">
             <span className="lp-section-tag">Our Courses</span>
-            <h2 className="lp-section-title">Popular Courses</h2>
+            <h2 className="lp-section-title">
+              {search.trim() ? `Results for "${search}"` : 'Popular Courses'}
+            </h2>
             <p className="lp-section-sub">
-              Explore our most in-demand courses, taught by industry professionals.
+              {search.trim()
+                ? `${filtered.length} course${filtered.length !== 1 ? 's' : ''} found`
+                : 'Explore our most in-demand courses, taught by industry professionals.'}
             </p>
+            {search.trim() && (
+              <button type="button" className="lp-clear-search" onClick={() => { setSearch(''); setSearchInput(''); }}>
+                ✕ Clear search
+              </button>
+            )}
           </div>
 
           {/* Category + Sort bar */}
@@ -431,7 +452,6 @@ export function Home() {
             {!loading && filtered.map((c) => {
               const teacherName = c.teacher_id?.name || 'Instructor';
               const thumb = resolveMediaUrl(c.thumbnail) || '/placeholder-course.svg';
-              const inCart = isInCart(c._id);
               const price = getCoursePrice(c);
               const hasSale = price < Number(c.price || 0);
               const catName = c.category_id?.name || 'General';
@@ -472,16 +492,11 @@ export function Home() {
                       {hasSale && <span className="lp-course-price-old">${Number(c.price).toFixed(2)}</span>}
                     </div>
                     <div className="lp-course-footer-btns">
-                      <button
-                        type="button"
-                        className="lp-cart-toggle-btn"
-                        onClick={() => onToggleCart(c._id)}
-                        aria-label={inCart ? 'Remove from cart' : 'Add to cart'}
-                      >
-                        <Heart size={15} fill={inCart ? '#f28c28' : 'none'} color={inCart ? '#f28c28' : '#94a3b8'} />
-                      </button>
                       <Link to={`/courses/${c._id}`} className="lp-btn-view-course">
-                        View Course <ArrowRight size={14} />
+                        View Details
+                      </Link>
+                      <Link to={`/courses/${c._id}`} className="lp-btn-buy-course">
+                        Buy Course <ArrowRight size={13} />
                       </Link>
                     </div>
                   </div>

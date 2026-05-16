@@ -39,6 +39,9 @@ import { TeacherProfile } from './pages/dashboard/TeacherProfile';
 import { EditorCourses } from './pages/dashboard/EditorCourses';
 import { StudentCourses } from './pages/dashboard/StudentCourses';
 import { StudentCertificates } from './pages/dashboard/StudentCertificates';
+import { StudentRefunds } from './pages/dashboard/StudentRefunds';
+import { AdminRefunds } from './pages/dashboard/AdminRefunds';
+import { AdminCommissions } from './pages/dashboard/AdminCommissions';
 import { NotificationsCenter } from './pages/dashboard/NotificationsCenter';
 
 export default function App() {
@@ -104,6 +107,8 @@ export default function App() {
           <Route path="admin/reviews" element={<AdminReviews />} />
           <Route path="admin/certificates" element={<AdminCertificates />} />
           <Route path="admin/offline-enrollments" element={<AdminOfflineEnrollments />} />
+          <Route path="admin/refunds" element={<AdminRefunds />} />
+          <Route path="admin/commissions" element={<AdminCommissions />} />
         </Route>
         <Route element={<RoleRoute roles={['teacher']} />}>
           <Route path="teacher/courses" element={<TeacherCourses />} />
@@ -127,6 +132,7 @@ export default function App() {
       >
         <Route path="courses" element={<StudentCourses />} />
         <Route path="certificates" element={<StudentCertificates />} />
+        <Route path="refunds" element={<StudentRefunds />} />
       </Route>
 
       <Route

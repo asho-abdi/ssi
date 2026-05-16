@@ -4,7 +4,15 @@ import { BookOpen, CheckCircle2, ChevronDown } from 'lucide-react';
 import api from '../api/client';
 import { SSILogo } from '../components/SSILogo';
 
-const EMPTY = { fullName: '', email: '', phone: '', courseId: '' };
+const PAYMENT_METHODS = [
+  { value: 'evc_plus', label: 'EVC Plus' },
+  { value: 'sahal', label: 'Sahal' },
+  { value: 'zaad', label: 'Zaad' },
+  { value: 'cash', label: 'Cash' },
+  { value: 'bank_transfer', label: 'Bank Transfer' },
+];
+
+const EMPTY = { fullName: '', email: '', phone: '', courseId: '', schedule: '', paymentMethod: 'cash', notes: '' };
 
 export function OfflineEnrollment() {
   const [courses, setCourses] = useState([]);
@@ -149,12 +157,57 @@ export function OfflineEnrollment() {
                 </div>
               </div>
 
+              <div className="oe-field">
+                <label className="oe-label" htmlFor="oe-schedule">Preferred Schedule</label>
+                <input
+                  id="oe-schedule"
+                  className="oe-input"
+                  type="text"
+                  placeholder="e.g. Morning, Weekends, Mon/Wed/Fri"
+                  value={form.schedule}
+                  onChange={(e) => setForm((f) => ({ ...f, schedule: e.target.value }))}
+                />
+              </div>
+
+              <div className="oe-field">
+                <label className="oe-label" htmlFor="oe-payment">Payment Method</label>
+                <div className="oe-payment-grid">
+                  {PAYMENT_METHODS.map((pm) => (
+                    <label
+                      key={pm.value}
+                      className={`oe-payment-option ${form.paymentMethod === pm.value ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={pm.value}
+                        checked={form.paymentMethod === pm.value}
+                        onChange={() => setForm((f) => ({ ...f, paymentMethod: pm.value }))}
+                      />
+                      {pm.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
               {price !== null && (
                 <div className="oe-price-display">
                   <span className="oe-price-label">Course fee</span>
                   <span className="oe-price-value">${Number(price).toFixed(2)}</span>
                 </div>
               )}
+
+              <div className="oe-field">
+                <label className="oe-label" htmlFor="oe-notes">Additional Notes <span style={{fontWeight:400,color:'#94a3b8'}}>(optional)</span></label>
+                <textarea
+                  id="oe-notes"
+                  className="oe-input oe-textarea"
+                  rows={3}
+                  placeholder="Any special requirements or questions…"
+                  value={form.notes}
+                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+                />
+              </div>
 
               <button
                 type="submit"
@@ -308,6 +361,38 @@ export function OfflineEnrollment() {
           font-size: 1.15rem;
           font-weight: 700;
           color: #0369a1;
+        }
+        .oe-payment-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+        }
+        .oe-payment-option {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          border: 1.5px solid #d1d5db;
+          border-radius: 8px;
+          padding: 0.5rem 0.65rem;
+          font-size: 0.85rem;
+          font-weight: 500;
+          color: #374151;
+          cursor: pointer;
+          transition: border-color 0.15s, background 0.15s, color 0.15s;
+        }
+        .oe-payment-option input[type="radio"] { display: none; }
+        .oe-payment-option.selected {
+          border-color: #1d3557;
+          background: #eff6ff;
+          color: #1d3557;
+          font-weight: 700;
+        }
+        .oe-payment-option:hover { border-color: #1d3557; }
+        .oe-textarea {
+          height: auto;
+          padding: 0.6rem 0.85rem;
+          resize: vertical;
+          line-height: 1.55;
         }
         .oe-btn-primary {
           height: 44px;
