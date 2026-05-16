@@ -4,12 +4,15 @@ import {
   ArrowLeft,
   Award,
   BarChart3,
+  Bookmark,
   ChevronDown,
   Clock,
   FileText,
   Lock,
+  PlayCircle,
   PlaySquare,
   RefreshCw,
+  Share2,
   Star,
   User,
 } from 'lucide-react';
@@ -215,6 +218,8 @@ export function CourseDetail() {
   return (
     <div className="cd-page">
       <div className="cd-inner">
+
+        {/* ── Back bar ── */}
         <header className="cd-topbar">
           <Link to="/" className="cd-back">
             <ArrowLeft size={18} strokeWidth={2.25} aria-hidden />
@@ -222,90 +227,85 @@ export function CourseDetail() {
           </Link>
         </header>
 
-        <section className={`cd-banner ${previewEmbedSrc ? 'has-video' : ''} ${hasUploadedBanner ? 'has-thumb' : ''}`} aria-label="Course">
-          {previewEmbedSrc ? (
-            <div className="cd-banner-video-wrap">
-              <iframe
-                title={`${course.title} preview`}
-                src={previewEmbedSrc}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : hasUploadedBanner ? (
-            <div
-              className="cd-banner-media"
-              role="img"
-              aria-label={course.title}
-              style={{ backgroundImage: `url(${bannerThumbUrl})` }}
-            />
-          ) : (
-            <div className="cd-banner-inner">
-              <div className="cd-banner-copy">
-                <h1>
-                  {line1}
-                  {line2 && <span className="cd-title-line2">{line2}</span>}
-                </h1>
-                <span className="cd-join-pill">JOIN OUR COURSE</span>
-              </div>
-              <img className="cd-banner-avatar" src={avatarUrl} alt="" width={120} height={120} />
-            </div>
-          )}
-        </section>
+        {/* ── Course title header ── */}
+        <div className="cd-course-header">
+          <div className="cd-course-header-left">
+            {course.category_id?.name && (
+              <p className="cd-course-cats">
+                Categories: <strong>{course.category_id.name}</strong>
+              </p>
+            )}
+            <h1 className="cd-course-title-main">{course.title}</h1>
+          </div>
+          <div className="cd-course-header-right">
+            <button type="button" className="cd-action-btn">
+              <Bookmark size={15} /> Wishlist
+            </button>
+            <button type="button" className="cd-action-btn">
+              <Share2 size={15} /> Share
+            </button>
+          </div>
+        </div>
 
-        <div className="cd-layout">
-          <main>
+        {/* ── Main split: video left + sidebar right ── */}
+        <div className="cd-split-layout">
+
+          {/* ── Left: video + tabs ── */}
+          <div className="cd-video-col">
+
+            {/* Video / thumbnail */}
+            <div className="cd-video-player">
+              {previewEmbedSrc ? (
+                <iframe
+                  title={`${course.title} preview`}
+                  src={previewEmbedSrc}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : hasUploadedBanner ? (
+                <div
+                  className="cd-video-thumb"
+                  role="img"
+                  aria-label={course.title}
+                  style={{ backgroundImage: `url(${bannerThumbUrl})` }}
+                />
+              ) : (
+                <div className="cd-video-placeholder">
+                  <img className="cd-banner-avatar" src={avatarUrl} alt="" width={100} height={100} />
+                  <p>{course.title}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Tabs */}
             <div className="cd-tabs" role="tablist" aria-label="Course sections">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === 'info'}
+              <button type="button" role="tab" aria-selected={tab === 'info'}
                 className={`cd-tab ${tab === 'info' ? 'is-active' : ''}`}
-                onClick={() => setTab('info')}
-              >
-                Course Info
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === 'reviews'}
+                onClick={() => setTab('info')}>Course Info</button>
+              <button type="button" role="tab" aria-selected={tab === 'reviews'}
                 className={`cd-tab ${tab === 'reviews' ? 'is-active' : ''}`}
-                onClick={() => setTab('reviews')}
-              >
-                Reviews
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab === 'announcements'}
+                onClick={() => setTab('reviews')}>Reviews</button>
+              <button type="button" role="tab" aria-selected={tab === 'announcements'}
                 className={`cd-tab ${tab === 'announcements' ? 'is-active' : ''}`}
-                onClick={() => setTab('announcements')}
-              >
-                Announcements
-              </button>
+                onClick={() => setTab('announcements')}>Announcements</button>
             </div>
 
             {tab === 'info' && (
               <div className="cd-panel" role="tabpanel">
+                <h2 className="cd-section-title">About Course</h2>
                 <p className="cd-desc">{course.description || 'No description provided.'}</p>
                 <div className="cd-meta-chips">
-                  <span className="cd-meta-chip">
-                    <Clock size={17} />
-                    {course.duration} hours total
-                  </span>
+                  <span className="cd-meta-chip"><Clock size={15} />{course.duration} hours total</span>
                   {course.teacher_id?.name && (
-                    <span className="cd-meta-chip">
-                      <User size={17} />
-                      Instructor: {course.teacher_id.name}
-                    </span>
+                    <span className="cd-meta-chip"><User size={15} />Instructor: {course.teacher_id.name}</span>
                   )}
                   <span className="cd-meta-chip cd-star">
-                    <Star size={17} fill="currentColor" />
+                    <Star size={15} fill="currentColor" />
                     {reviews.average_rating ? reviews.average_rating.toFixed(1) : '—'} ({reviews.count} reviews)
                   </span>
                 </div>
 
-                <h2 className="cd-section-title">Course Content</h2>
+                <h2 className="cd-section-title">Course Description</h2>
                 {modules.length === 0 && <p className="cd-muted">No content listed yet.</p>}
                 {modules.map((mod, mi) => (
                   <div key={mod._id} className="cd-module">
@@ -323,9 +323,7 @@ export function CourseDetail() {
                         {mod.lessons.map((lesson, li) => (
                           <div key={lesson._id || li} className="cd-lesson-row">
                             <PlaySquare size={16} className="cd-row-icon" />
-                            <span className="cd-row-title">
-                              {lesson.title}
-                            </span>
+                            <span className="cd-row-title">{lesson.title}</span>
                             <Lock size={14} className="cd-lock-icon" />
                           </div>
                         ))}
@@ -362,9 +360,7 @@ export function CourseDetail() {
                             ))}
                           </span>
                         </div>
-                        <p className="cd-muted cd-no-margin">
-                          {rev.comment}
-                        </p>
+                        <p className="cd-muted cd-no-margin">{rev.comment}</p>
                       </li>
                     ))}
                   </ul>
@@ -377,100 +373,79 @@ export function CourseDetail() {
                 <p className="cd-muted">No announcements.</p>
               </div>
             )}
-          </main>
+          </div>
 
-          <aside>
+          {/* ── Right: sidebar ── */}
+          <aside className="cd-sidebar">
+
+            {/* Price + buy card */}
             <div className="cd-side-card">
               <div className="cd-price-wrap">
-                <div className="cd-price-tag">${displayPrice.toFixed(2)}</div>
-                {hasSale && <div className="cd-price-old">${Number(course.price).toFixed(2)}</div>}
+                <span className="cd-price-tag">${displayPrice.toFixed(2)}</span>
+                {hasSale && <span className="cd-price-old">${Number(course.price).toFixed(2)}</span>}
               </div>
-              <h3>Course Progress</h3>
-              {prog.loading ? (
-                <p className="cd-muted cd-no-margin">
-                  Loading…
-                </p>
-              ) : (
-                <>
-                  <div className="cd-progress-stats">
-                    <span>
-                      <strong>{completedLessons}</strong> / {totalLessons || '—'}
-                    </span>
-                    <span>{progressPct}% Complete</span>
-                  </div>
-                  <div className="cd-progress-bar">
-                    <div className="cd-progress-fill" style={{ width: `${progressPct}%` }} />
-                  </div>
-                </>
-              )}
+
               {isApproved && (
                 <>
+                  <div className="cd-progress-stats">
+                    <span><strong>{completedLessons}</strong> / {totalLessons || '—'} lessons</span>
+                    <span>{progressPct}%</span>
+                  </div>
+                  <div className="cd-progress-bar"><div className="cd-progress-fill" style={{ width: `${progressPct}%` }} /></div>
                   <Link to={`/watch/${course._id}`} className="cd-btn-primary">
-                    <PlayCircle size={18} />
-                    Start Learning
-                  </Link>
-                  <Link to={`/watch/${course._id}`} className="cd-btn-outline">
-                    Continue course
+                    <PlayCircle size={18} /> Start Learning
                   </Link>
                 </>
               )}
+
               {showCheckoutActions && (
-                <Link to={canBuy ? `/checkout/${course._id}` : '/login'} className="cd-btn-primary cd-btn-buy">
-                  Buy Course — ${displayPrice.toFixed(2)}
+                <Link to={canBuy ? `/checkout/${course._id}` : '/login'} className="cd-btn-primary">
+                  Add to cart
                 </Link>
               )}
+
               {isPending && <p className="cd-aside-note">Enrollment pending. Submit payment details to continue.</p>}
-              {isPendingVerification && <p className="cd-aside-note">Payment proof submitted. Waiting for admin verification.</p>}
+              {isPendingVerification && <p className="cd-aside-note">Payment proof submitted — waiting for verification.</p>}
               {isRejected && (
-                <p className="cd-aside-note">
-                  Payment was rejected. <Link to={`/checkout/${course._id}`}>Resubmit proof</Link>.
-                </p>
+                <p className="cd-aside-note">Payment rejected. <Link to={`/checkout/${course._id}`}>Resubmit proof</Link>.</p>
               )}
-              {!user && (
-                <p className="cd-aside-note">
-                  <Link to="/login">Sign in</Link> to continue.
-                </p>
-              )}
-              {user && !isApproved && canBuy && !enrollment && (
-                <p className="cd-aside-note">Enrollment required.</p>
-              )}
-              {user?.role === 'teacher' && (
-                <p className="cd-aside-note">Manage from dashboard.</p>
-              )}
+              {!user && <p className="cd-aside-note"><Link to="/login">Sign in</Link> to continue.</p>}
+              {user?.role === 'teacher' && <p className="cd-aside-note">Manage from dashboard.</p>}
             </div>
 
+            {/* Course meta */}
             <div className="cd-side-card">
-              <h3>About this course</h3>
               <ul className="cd-meta-list">
+                <li><BarChart3 size={17} strokeWidth={2} /><span>{levelLabel(course.difficulty_level)}</span></li>
                 <li>
-                  <BarChart3 size={18} strokeWidth={2} />
-                  <span>{levelLabel(course.difficulty_level)}</span>
+                  <RefreshCw size={17} strokeWidth={2} />
+                  <span>{updated ? `${updated.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} Last Updated` : 'Recently updated'}</span>
                 </li>
-                <li>
-                  <RefreshCw size={18} strokeWidth={2} />
-                  <span>
-                    {updated ? `${updated.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })} — Last updated` : 'Recently updated'}
-                  </span>
-                </li>
-                <li>
-                  <Award size={18} strokeWidth={2} />
-                  <span>Certificate of completion</span>
-                </li>
+                <li><Award size={17} strokeWidth={2} /><span>Certificate of completion</span></li>
               </ul>
             </div>
 
+            {/* Instructor */}
             <div className="cd-side-card">
               <p className="cd-instructor-label">A course by</p>
               <div className="cd-instructor-row">
-                <img src={avatarUrl} alt="" width={52} height={52} />
-                <div>
-                  <strong>{teacherName}</strong>
-                  <span className="cd-muted cd-instructor-subtitle">
-                    Instructor
-                  </span>
-                </div>
+                <img src={avatarUrl} alt="" width={48} height={48} />
+                <strong>{teacherName}</strong>
               </div>
             </div>
+
+            {/* Material includes */}
+            <div className="cd-side-card">
+              <h3>Material Includes</h3>
+              <ul className="cd-meta-list">
+                <li><PlaySquare size={17} strokeWidth={2} /><span>Recorded Video</span></li>
+                {course.all_resources?.length > 0 && (
+                  <li><FileText size={17} strokeWidth={2} /><span>{course.all_resources.length} downloadable resource{course.all_resources.length !== 1 ? 's' : ''}</span></li>
+                )}
+                <li><Award size={17} strokeWidth={2} /><span>Certificate of completion</span></li>
+              </ul>
+            </div>
+
           </aside>
         </div>
       </div>

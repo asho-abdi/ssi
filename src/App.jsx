@@ -62,14 +62,7 @@ export default function App() {
       <Route path="/certificate/verify/:serial" element={<CertificateVerify />} />
       <Route path="/courses/:id" element={<CourseDetail />} />
       <Route path="/cart" element={<Cart />} />
-      <Route
-        path="/checkout/:courseId"
-        element={
-          <ProtectedRoute roles={['student', 'admin']}>
-            <Checkout />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/checkout/:courseId" element={<Checkout />} />
       <Route
         path="/watch/:courseId"
         element={

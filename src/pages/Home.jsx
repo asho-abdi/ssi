@@ -19,7 +19,6 @@ import {
   Phone,
   PlayCircle,
   Search,
-  ShoppingCart,
   Star,
   TrendingUp,
   Trophy,
@@ -31,7 +30,6 @@ import toast from 'react-hot-toast';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { SSILogo } from '../components/SSILogo';
-import { getCartIds } from '../utils/cart';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import './Home.css';
 
@@ -130,7 +128,6 @@ export function Home() {
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('newest');
   const [heroSlide, setHeroSlide] = useState(0);
-  const [cartIds] = useState(() => getCartIds());
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -190,24 +187,21 @@ export function Home() {
           <nav className="lp-nav-links" aria-label="Main navigation">
             <Link to="/" className="lp-nav-link lp-nav-link-active">Home</Link>
             <a href="#catalog" className="lp-nav-link">Courses</a>
-            <Link to="/events" className="lp-nav-link">Events</Link>
+            <Link to="/dashboard" className="lp-nav-link">Dashboard</Link>
             <Link to="/become-instructor" className="lp-nav-link">Become Instructor</Link>
-            <Link to="/contact" className="lp-nav-link">Contact</Link>
+            <Link to="/events" className="lp-nav-link">Events</Link>
+            <Link to="/contact" className="lp-nav-link">Contacts</Link>
           </nav>
           <div className="lp-nav-actions">
-            <Link to="/cart" className="lp-cart-btn" aria-label="Cart">
-              <ShoppingCart size={18} />
-              {cartIds.length > 0 && <span className="lp-cart-badge">{cartIds.length}</span>}
-            </Link>
             {user ? (
               <>
-                <Link to="/dashboard" className="lp-btn-outline-sm">Dashboard</Link>
-                <button type="button" className="lp-btn-ghost-sm" onClick={logout}>Sign out</button>
+                <Link to="/dashboard" className="lp-btn-ghost-sm">Dashboard</Link>
+                <button type="button" className="lp-btn-primary-sm" onClick={logout}>Sign out</button>
               </>
             ) : (
               <>
                 <Link to="/login" className="lp-btn-ghost-sm">Sign In</Link>
-                <Link to="/register" className="lp-btn-primary-sm">Get Started</Link>
+                <Link to="/register" className="lp-btn-primary-sm">Sign Up</Link>
               </>
             )}
           </div>
@@ -224,15 +218,16 @@ export function Home() {
           <div className="lp-mobile-menu">
             <Link to="/" onClick={() => setMobileNavOpen(false)}>Home</Link>
             <a href="#catalog" onClick={() => setMobileNavOpen(false)}>Courses</a>
-            <Link to="/events" onClick={() => setMobileNavOpen(false)}>Events</Link>
+            <Link to="/dashboard" onClick={() => setMobileNavOpen(false)}>Dashboard</Link>
             <Link to="/become-instructor" onClick={() => setMobileNavOpen(false)}>Become Instructor</Link>
-            <Link to="/contact" onClick={() => setMobileNavOpen(false)}>Contact</Link>
+            <Link to="/events" onClick={() => setMobileNavOpen(false)}>Events</Link>
+            <Link to="/contact" onClick={() => setMobileNavOpen(false)}>Contacts</Link>
             <div className="lp-mobile-auth">
               {user
                 ? <Link to="/dashboard" onClick={() => setMobileNavOpen(false)} className="lp-btn-primary-sm">Dashboard</Link>
                 : <>
                     <Link to="/login" onClick={() => setMobileNavOpen(false)} className="lp-btn-ghost-sm">Sign In</Link>
-                    <Link to="/register" onClick={() => setMobileNavOpen(false)} className="lp-btn-primary-sm">Get Started</Link>
+                    <Link to="/register" onClick={() => setMobileNavOpen(false)} className="lp-btn-primary-sm">Sign Up</Link>
                   </>
               }
             </div>
@@ -240,68 +235,55 @@ export function Home() {
         )}
       </header>
 
+      {/* ── TOP SEARCH BAR ── */}
+      <div className="lp-top-search-wrap">
+        <form className="lp-top-search" onSubmit={(e) => { e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' }); }}>
+          <Search size={16} className="lp-top-search-icon" />
+          <input
+            type="text"
+            className="lp-top-search-input"
+            placeholder="Type to start searching..."
+            value={searchInput}
+            onChange={(e) => { setSearchInput(e.target.value); setSearch(e.target.value); }}
+          />
+          {search.trim() && (
+            <button type="button" className="lp-top-search-clear" onClick={() => { setSearch(''); setSearchInput(''); }}>✕</button>
+          )}
+          <button type="submit" className="lp-top-search-btn">Search</button>
+        </form>
+      </div>
+
       {/* ── HERO ── */}
       <section className="lp-hero">
         <div className="lp-hero-inner">
           <div className="lp-hero-copy">
             <div className="lp-hero-badge">
-              <TrendingUp size={14} />
-              #1 Professional Skills Training in Somalia
+              <TrendingUp size={13} />
+              #1 Professional Skills Training
             </div>
             <h1 className="lp-hero-heading">
-              Build Your Future With<br />
-              <span className="lp-hero-heading-accent">Expert-Led Courses</span>
+              Build Your Success <span className="lp-hero-heading-accent">With</span><br />
+              Expert Courses
             </h1>
             <p className="lp-hero-sub">
-              Join thousands of professionals upgrading their careers through
-              practical, certificate-backed courses from SSI — anytime, anywhere.
+              Ku soo biir SSI E-Learning Platform – Madal Waxbarasho Casri ah oo kuu sahlaysa
+              inaad wax ka barato Goob Kasta iyo Goor kastaba.
             </p>
-            <form
-              className="lp-hero-search"
-              onSubmit={(e) => { e.preventDefault(); setSearch(searchInput); document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' }); }}
-            >
-              <Search size={18} className="lp-hero-search-icon" />
-              <input
-                type="text"
-                className="lp-hero-search-input"
-                placeholder="Search courses, skills, instructors…"
-                value={searchInput}
-                onChange={(e) => { setSearchInput(e.target.value); setSearch(e.target.value); }}
-              />
-              <button type="submit" className="lp-hero-search-btn">Search</button>
-            </form>
             <div className="lp-hero-actions">
               <a href="#catalog" className="lp-btn-hero-primary">
-                Explore Courses <ArrowRight size={18} />
+                Explore Courses <ArrowRight size={17} />
               </a>
-              <Link to="/become-instructor" className="lp-btn-hero-secondary">
-                Become Instructor
-              </Link>
+              <a href={WA_LINK} target="_blank" rel="noreferrer" className="lp-btn-hero-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.123 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                Contacts
+              </a>
             </div>
-            <div className="lp-trust-badges">
-              <div className="lp-trust-badge">
-                <Star size={15} fill="#f28c28" color="#f28c28" />
-                <strong>4.8</strong>
-                <span>Rating</span>
-              </div>
-              <div className="lp-trust-divider" />
-              <div className="lp-trust-badge">
-                <Users size={15} color="#fff" />
-                <strong>500+</strong>
-                <span>Students</span>
-              </div>
-              <div className="lp-trust-divider" />
-              <div className="lp-trust-badge">
-                <BookOpen size={15} color="#fff" />
-                <strong>15+</strong>
-                <span>Courses</span>
-              </div>
-              <div className="lp-trust-divider" />
-              <div className="lp-trust-badge">
-                <Trophy size={15} color="#fff" />
-                <strong>100%</strong>
-                <span>Certified</span>
-              </div>
+            <div className="lp-hero-pills">
+              {['Access to all courses', 'Certificate of completion', '24/7 learning support', 'Project-based learning'].map((pill) => (
+                <span key={pill} className="lp-hero-pill">
+                  <CheckCircle size={13} /> {pill}
+                </span>
+              ))}
             </div>
           </div>
           <div className="lp-hero-visual">
@@ -313,14 +295,14 @@ export function Home() {
                 className="lp-hero-img"
               />
               <div className="lp-hero-floating-card lp-hero-card-top">
-                <CheckCircle size={18} color="#16a34a" />
+                <CheckCircle size={16} color="#16a34a" />
                 <div>
                   <strong>Certificate Earned</strong>
                   <span>Business Management</span>
                 </div>
               </div>
               <div className="lp-hero-floating-card lp-hero-card-bottom">
-                <Users size={18} color="#0369a1" />
+                <Users size={16} color="#0369a1" />
                 <div>
                   <strong>120 students</strong>
                   <span>joined this week</span>
@@ -360,33 +342,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section className="lp-section lp-features-section">
-        <div className="lp-container">
-          <div className="lp-section-head">
-            <span className="lp-section-tag">Why Choose SSI</span>
-            <h2 className="lp-section-title">Everything You Need to Succeed</h2>
-            <p className="lp-section-sub">
-              We combine world-class instruction with flexible access and recognized credentials.
-            </p>
-          </div>
-          <div className="lp-features-grid">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="lp-feature-card">
-                <div className="lp-feature-icon" style={{ background: f.color, color: f.iconColor }}>
-                  {f.icon}
-                </div>
-                <h3 className="lp-feature-title">{f.title}</h3>
-                <p className="lp-feature-desc">{f.desc}</p>
-                <span className="lp-feature-link">
-                  Learn more <ChevronRight size={14} />
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── COURSE CATALOG ── */}
       <section id="catalog" className="lp-section lp-catalog-section">
         <div className="lp-container">
@@ -400,12 +355,32 @@ export function Home() {
                 ? `${filtered.length} course${filtered.length !== 1 ? 's' : ''} found`
                 : 'Explore our most in-demand courses, taught by industry professionals.'}
             </p>
+          </div>
+
+          {/* Search bar */}
+          <form
+            className="lp-catalog-search"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <Search size={17} className="lp-catalog-search-icon" />
+            <input
+              type="text"
+              className="lp-catalog-search-input"
+              placeholder="Search by course, instructor, or keyword…"
+              value={searchInput}
+              onChange={(e) => { setSearchInput(e.target.value); setSearch(e.target.value); }}
+            />
             {search.trim() && (
-              <button type="button" className="lp-clear-search" onClick={() => { setSearch(''); setSearchInput(''); }}>
-                ✕ Clear search
+              <button
+                type="button"
+                className="lp-catalog-search-clear"
+                onClick={() => { setSearch(''); setSearchInput(''); }}
+                aria-label="Clear search"
+              >
+                ✕
               </button>
             )}
-          </div>
+          </form>
 
           {/* Category + Sort bar */}
           <div className="lp-catalog-bar">
