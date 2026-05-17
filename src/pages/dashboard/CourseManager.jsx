@@ -961,10 +961,13 @@ export function CourseManager({ mode = 'editor' }) {
       (topic.lessons || [])
         .filter((l) => l.title && l.video_url)
         .forEach((lesson) => {
+          const lessonId = lesson._id;
+          const idOk = typeof lessonId === 'string' && /^[a-fA-F0-9]{24}$/.test(lessonId);
           const normalizedLesson = {
+            ...(idOk ? { _id: lessonId } : {}),
             title: lesson.title,
             video_url: lesson.video_url,
-            duration: lesson.duration || '',
+            duration: lesson.duration != null ? String(lesson.duration).trim() : '',
             order: flattenedLessons.length,
           };
           flattenedLessons.push(normalizedLesson);
