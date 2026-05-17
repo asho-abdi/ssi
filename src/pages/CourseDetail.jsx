@@ -292,55 +292,85 @@ export function CourseDetail() {
 
             {tab === 'info' && (
               <div className="cd-panel" role="tabpanel">
-                <h2 className="cd-section-title">About Course</h2>
-                <p className="cd-desc">{course.description || 'No description provided.'}</p>
-                <div className="cd-meta-chips">
-                  <span className="cd-meta-chip"><Clock size={15} />{course.duration} hours total</span>
-                  {course.teacher_id?.name && (
-                    <span className="cd-meta-chip"><User size={15} />Instructor: {course.teacher_id.name}</span>
-                  )}
-                  <span className="cd-meta-chip cd-star">
-                    <Star size={15} fill="currentColor" />
-                    {reviews.average_rating ? reviews.average_rating.toFixed(1) : '—'} ({reviews.count} reviews)
-                  </span>
-                </div>
 
-                <h2 className="cd-section-title">Course Description</h2>
-                {modules.length === 0 && <p className="cd-muted">No content listed yet.</p>}
-                {modules.map((mod, mi) => (
-                  <div key={mod._id} className="cd-module">
-                    <button
-                      type="button"
-                      className={`cd-module-header ${isModuleOpen(mod._id, mi) ? 'is-open' : ''}`}
-                      onClick={() => toggleModule(mod._id)}
-                      aria-expanded={isModuleOpen(mod._id, mi)}
-                    >
-                      <span className="cd-module-title">{mod.title}</span>
-                      <ChevronDown size={18} className="cd-module-chevron" />
-                    </button>
-                    {isModuleOpen(mod._id, mi) && (
-                      <div className="cd-module-body">
-                        {mod.lessons.map((lesson, li) => (
-                          <div key={lesson._id || li} className="cd-lesson-row">
-                            <PlaySquare size={16} className="cd-row-icon" />
-                            <span className="cd-row-title">{lesson.title}</span>
-                            <Lock size={14} className="cd-lock-icon" />
-                          </div>
-                        ))}
-                        {mod.resources.map((res, ri) => (
-                          <div key={res._id || ri} className="cd-lesson-row cd-resource-row">
-                            <FileText size={16} className="cd-row-icon" />
-                            <span className="cd-row-title">{res.name}</span>
-                            <Lock size={14} className="cd-lock-icon" />
-                          </div>
-                        ))}
-                        {mod.lessons.length === 0 && mod.resources.length === 0 && (
-                          <p className="cd-muted cd-module-empty">No content yet.</p>
-                        )}
+                {/* About Course card */}
+                <div className="cd-about-card">
+                  <h2 className="cd-about-heading">About Course</h2>
+                  <p className="cd-about-desc">{course.description || 'No description provided.'}</p>
+                  <div className="cd-about-meta">
+                    <div className="cd-about-meta-item">
+                      <Clock size={16} />
+                      <span><strong>{course.duration}h</strong> total duration</span>
+                    </div>
+                    {course.teacher_id?.name && (
+                      <div className="cd-about-meta-item">
+                        <User size={16} />
+                        <span>By <strong>{course.teacher_id.name}</strong></span>
                       </div>
                     )}
+                    <div className="cd-about-meta-item cd-star">
+                      <Star size={16} fill="currentColor" />
+                      <span><strong>{reviews.average_rating ? reviews.average_rating.toFixed(1) : '—'}</strong> ({reviews.count} reviews)</span>
+                    </div>
+                    <div className="cd-about-meta-item">
+                      <PlaySquare size={16} />
+                      <span><strong>{totalLessons}</strong> lesson{totalLessons !== 1 ? 's' : ''}</span>
+                    </div>
                   </div>
-                ))}
+                </div>
+
+                {/* Course content */}
+                <div className="cd-content-section">
+                  <h2 className="cd-section-title">Course Content</h2>
+                  <p className="cd-content-meta">{totalLessons} lesson{totalLessons !== 1 ? 's' : ''} · {course.duration}h total length</p>
+                  {modules.length === 0 && <p className="cd-muted">No content listed yet.</p>}
+                  {modules.map((mod, mi) => (
+                    <div key={mod._id} className="cd-module">
+                      <button
+                        type="button"
+                        className={`cd-module-header ${isModuleOpen(mod._id, mi) ? 'is-open' : ''}`}
+                        onClick={() => toggleModule(mod._id)}
+                        aria-expanded={isModuleOpen(mod._id, mi)}
+                      >
+                        <span className="cd-module-title">{mod.title}</span>
+                        <span className="cd-module-count">{mod.lessons.length} lesson{mod.lessons.length !== 1 ? 's' : ''}</span>
+                        <ChevronDown size={18} className="cd-module-chevron" />
+                      </button>
+                      {isModuleOpen(mod._id, mi) && (
+                        <div className="cd-module-body">
+                          {mod.lessons.map((lesson, li) => (
+                            <div key={lesson._id || li} className="cd-lesson-row">
+                              <span className="cd-lesson-num">{li + 1}</span>
+                              <PlaySquare size={15} className="cd-row-icon" />
+                              <span className="cd-row-title">{lesson.title}</span>
+                              <span className="cd-lesson-right">
+                                {lesson.duration && (
+                                  <span className="cd-lesson-duration">
+                                    <Clock size={12} /> {lesson.duration}
+                                  </span>
+                                )}
+                                <Lock size={13} className="cd-lock-icon" />
+                              </span>
+                            </div>
+                          ))}
+                          {mod.resources.map((res, ri) => (
+                            <div key={res._id || ri} className="cd-lesson-row cd-resource-row">
+                              <span className="cd-lesson-num">{mod.lessons.length + ri + 1}</span>
+                              <FileText size={15} className="cd-row-icon" />
+                              <span className="cd-row-title">{res.name}</span>
+                              <span className="cd-lesson-right">
+                                <Lock size={13} className="cd-lock-icon" />
+                              </span>
+                            </div>
+                          ))}
+                          {mod.lessons.length === 0 && mod.resources.length === 0 && (
+                            <p className="cd-muted cd-module-empty">No content yet.</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 

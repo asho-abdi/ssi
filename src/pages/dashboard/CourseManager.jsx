@@ -18,7 +18,7 @@ import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
 
-const emptyLesson = { title: '', video_url: '', order: 0 };
+const emptyLesson = { title: '', video_url: '', duration: '', order: 0 };
 const emptyAssignment = { title: '', description: '', due_date: '', points: 100 };
 const emptyResource = { name: '', url: '', file_type: 'other', size_bytes: 0, storage_path: '' };
 const emptyQuizQuestion = {
@@ -331,6 +331,7 @@ export function CourseManager({ mode = 'editor' }) {
                     _client_id: l._id,
                     title: l.title || '',
                     video_url: l.video_url || '',
+                    duration: l.duration || '',
                     order: l.order ?? i,
                   }))
                 : [],
@@ -400,6 +401,7 @@ export function CourseManager({ mode = 'editor' }) {
                       _client_id: l._id,
                       title: l.title,
                       video_url: l.video_url,
+                      duration: l.duration || '',
                       order: l.order ?? i,
                     }))
                   : c.video_url
@@ -912,6 +914,7 @@ export function CourseManager({ mode = 'editor' }) {
           const normalizedLesson = {
             title: lesson.title,
             video_url: lesson.video_url,
+            duration: lesson.duration || '',
             order: flattenedLessons.length,
           };
           flattenedLessons.push(normalizedLesson);
@@ -1335,6 +1338,15 @@ export function CourseManager({ mode = 'editor' }) {
                                 className="input"
                                 value={lesson.video_url}
                                 onChange={(e) => setTopicLessonAt(topicIdx, lessonIdx, { video_url: e.target.value })}
+                              />
+                            </div>
+                            <div>
+                              <label className="label">Duration (e.g. 12 min, 1h 20m)</label>
+                              <input
+                                className="input"
+                                placeholder="e.g. 12 min"
+                                value={lesson.duration || ''}
+                                onChange={(e) => setTopicLessonAt(topicIdx, lessonIdx, { duration: e.target.value })}
                               />
                             </div>
                           </div>
