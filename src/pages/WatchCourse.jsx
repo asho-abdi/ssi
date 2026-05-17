@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api/client';
-import { toEmbedSrc } from '../utils/embed';
+import { toEmbedSrc, getVimeoPageUrl, isVimeoEmbedUrl } from '../utils/embed';
+import { formatDurationClock, formatManualLessonDuration } from '../utils/formatDuration';
 import { ArrowLeft, ArrowRight, Award, CheckCircle2, ChevronRight, Download, FileArchive, FileText, Loader2, Megaphone, MessageSquareText, PlayCircle, Star, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './WatchCourse.css';
@@ -38,6 +39,7 @@ export function WatchCourse() {
   const [announcementDraft, setAnnouncementDraft] = useState({ title: '', message: '', priority: 'normal' });
   const [announcementSubmitting, setAnnouncementSubmitting] = useState(false);
   const [resourceDownloadingId, setResourceDownloadingId] = useState(null);
+  const [lessonDurationByUrl, setLessonDurationByUrl] = useState({});
   const lessonItemRefs = useRef({});
   const playerIframeRef = useRef(null);
   const autoAdvancedLessonRef = useRef('');
@@ -131,6 +133,8 @@ export function WatchCourse() {
   }, [courseId]);
 
   const currentSrc = activeLesson ? toEmbedSrc(activeLesson.video_url) : '';
+  const vimeoPageUrl = activeLesson?.video_url ? getVimeoPageUrl(activeLesson.video_url) : '';
+  const showVimeoEmbedHelp = Boolean(currentSrc && isVimeoEmbedUrl(currentSrc));
   const topicSections = useMemo(() => {
     if (!course) return [];
     if (Array.isArray(course.course_topics) && course.course_topics.length > 0) {
@@ -176,6 +180,31 @@ export function WatchCourse() {
   }, [course]);
 
   const lessons = useMemo(() => topicSections.flatMap((topic) => topic.lessons || []), [topicSections]);
+
+  const lessonVideoUrlKey = useMemo(
+    () =>
+      [...new Set(lessons.map((l) => String(l?.video_url || '').trim()).filter(Boolean))]
+        .sort()
+        .join('|'),
+    [lessons]
+  );
+
+  useEffect(() => {
+    if (!lessonVideoUrlKey) return;
+    const urls = lessonVideoUrlKey.split('|').filter(Boolean);
+    if (urls.length === 0) return;
+    let cancelled = false;
+    api
+      .post('/media/video-durations', { urls })
+      .then((res) => {
+        if (!cancelled) setLessonDurationByUrl(res.data?.durations || {});
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [lessonVideoUrlKey]);
+
   const lessonTopicMap = useMemo(() => {
     const map = {};
     topicSections.forEach((topic) => {
@@ -828,6 +857,9 @@ export function WatchCourse() {
                                 ? pct >= 100
                                 : progress?.completed_lesson_ids?.some((id) => String(id) === String(l._id));
                             const isActive = String(activeLesson?._id) === String(l._id);
+                            const u = l?.video_url?.trim();
+                            const sec = u && lessonDurationByUrl[u] != null ? lessonDurationByUrl[u] : null;
+                            const clock = sec != null ? formatDurationClock(sec) : formatManualLessonDuration(l?.duration);
                             return (
                               <li key={String(l._id || `${topic.id}-lesson-${idx}`)}>
                                 <button
@@ -844,7 +876,7 @@ export function WatchCourse() {
                                     <span className={`watch-lesson-index ${isActive ? 'is-active' : ''}`}>{idx + 1}</span>
                                     <span className="watch-lesson-label">
                                       <span className="watch-lesson-title">{l.title}</span>
-                                      <span className="watch-lesson-meta">Video • {Math.max(6, 8 + idx * 2)}m</span>
+                                      <span className="watch-lesson-meta">{clock ? `Video • ${clock}` : 'Video'}</span>
                                     </span>
                                   </div>
                                   <div className="watch-lesson-state">
@@ -1040,12 +1072,24 @@ export function WatchCourse() {
                     src={currentSrc}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
                   onLoad={registerPlayerListeners}
                   />
               ) : (
                 <div className="watch-video-empty">This lesson video URL is invalid or unsupported.</div>
                 )}
               </div>
+              {showVimeoEmbedHelp && (
+                <div className="embed-vimeo-help" role="note">
+                  {vimeoPageUrl ? (
+                    <a href={vimeoPageUrl} target="_blank" rel="noopener noreferrer">Open on Vimeo</a>
+                  ) : null}
+                  {vimeoPageUrl ? <span className="embed-vimeo-help-sep">·</span> : null}
+                  <span>
+                    If you see a Vimeo privacy error, open the video in Vimeo → <strong>Privacy</strong> → allow embedding on this site’s domain (include your live URL and <code>localhost</code> for local dev). For private links, paste the full share URL including <code>?h=…</code>.
+                  </span>
+                </div>
+              )}
 
             <div className="watch-actions-row">
               <button type="button" className="btn btn-secondary watch-mark-btn" onClick={() => markLessonDone(activeLesson?._id, true)}>

@@ -257,10 +257,6 @@ export function DashboardLayout() {
         </div>
       </main>
       <style>{`
-        .dash-root {
-          min-height: 100vh;
-          display: flex;
-        }
         .dash-brand-logo {
           width: 130px;
           height: auto;
@@ -288,6 +284,10 @@ export function DashboardLayout() {
           left: 0;
           top: 0;
           height: 100vh;
+          height: 100dvh;
+          max-height: 100vh;
+          max-height: 100dvh;
+          overflow: hidden;
           z-index: 12;
         }
         .dash-brand {
@@ -309,6 +309,9 @@ export function DashboardLayout() {
           flex-direction: column;
           gap: 0.25rem;
           flex: 1;
+          min-height: 0;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .dash-nav-link {
           display: flex;
@@ -389,6 +392,7 @@ export function DashboardLayout() {
           display: flex;
           flex-direction: column;
           margin-left: var(--sidebar-width);
+          overflow: hidden;
         }
         .dash-topbar {
           display: flex;

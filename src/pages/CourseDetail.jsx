@@ -20,19 +20,10 @@ import toast from 'react-hot-toast';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
-import { toEmbedSrc } from '../utils/embed';
+import { toEmbedSrc, getVimeoPageUrl, isVimeoEmbedUrl } from '../utils/embed';
+import { formatDurationClock, formatManualLessonDuration } from '../utils/formatDuration';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import './CourseDetail.css';
-
-function splitBannerTitle(title) {
-  const words = title.trim().split(/\s+/);
-  if (words.length <= 1) return { line1: title, line2: '' };
-  const mid = Math.max(1, Math.ceil(words.length / 2));
-  return {
-    line1: words.slice(0, mid).join(' '),
-    line2: words.slice(mid).join(' '),
-  };
-}
 
 function getCoursePrice(course) {
   const sale = Number(course?.sale_price || 0);
@@ -49,6 +40,12 @@ function levelLabel(level) {
   return 'All levels';
 }
 
+function lessonClockLabel(lesson, durationMap) {
+  const u = lesson?.video_url?.trim();
+  if (u && durationMap[u] != null) return formatDurationClock(durationMap[u]);
+  return formatManualLessonDuration(lesson?.duration);
+}
+
 export function CourseDetail() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -60,6 +57,7 @@ export function CourseDetail() {
   const [enrollmentState, setEnrollmentState] = useState({ loading: true, data: null });
   const [prog, setProg] = useState({ loading: true, data: null });
   const [cartIds, setCartIds] = useState(() => getCartIds());
+  const [videoDurationByUrl, setVideoDurationByUrl] = useState({});
 
   useEffect(() => {
     const prevBg = document.body.style.background;
@@ -145,7 +143,7 @@ export function CourseDetail() {
     const flat = course.lessons?.length
       ? course.lessons.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       : course.video_url
-        ? [{ title: 'Introduction', _id: 'intro', order: 0 }]
+        ? [{ title: 'Introduction', _id: 'intro', order: 0, video_url: course.video_url }]
         : [];
     const allRes = course.all_resources || [];
     return flat.length || allRes.length
@@ -155,6 +153,30 @@ export function CourseDetail() {
 
   const lessonRows = useMemo(() => modules.flatMap((m) => m.lessons), [modules]);
   const totalLessons = lessonRows.length;
+
+  const lessonVideoUrlKey = useMemo(
+    () =>
+      [...new Set(lessonRows.map((l) => String(l?.video_url || '').trim()).filter(Boolean))]
+        .sort()
+        .join('|'),
+    [lessonRows]
+  );
+
+  useEffect(() => {
+    if (!lessonVideoUrlKey) return;
+    const urls = lessonVideoUrlKey.split('|').filter(Boolean);
+    if (urls.length === 0) return;
+    let cancelled = false;
+    api
+      .post('/media/video-durations', { urls })
+      .then((res) => {
+        if (!cancelled) setVideoDurationByUrl(res.data?.durations || {});
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [lessonVideoUrlKey]);
 
   const progressPct = useMemo(() => {
     if (!prog.data) return 0;
@@ -183,10 +205,12 @@ export function CourseDetail() {
 
   const canBuy = user?.role === 'student' || user?.role === 'admin';
   const showCheckoutActions = !enrollment && (!user || user?.role === 'student' || user?.role === 'admin');
-  const { line1, line2 } = splitBannerTitle(course.title);
   const bannerThumbUrl = resolveMediaUrl(course.thumbnail);
   const hasUploadedBanner = Boolean(bannerThumbUrl);
   const previewEmbedSrc = toEmbedSrc(course.video_url || lessonRows[0]?.video_url || '');
+  const previewVideoRaw = course.video_url || lessonRows[0]?.video_url || '';
+  const vimeoPageUrl = getVimeoPageUrl(previewVideoRaw);
+  const showVimeoEmbedHelp = Boolean(previewEmbedSrc && isVimeoEmbedUrl(previewEmbedSrc));
   const teacherName = course.teacher_id?.name || 'Instructor';
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherName)}&background=1d3557&color=fff&size=256`;
   const updated = course.updatedAt ? new Date(course.updatedAt) : null;
@@ -261,6 +285,7 @@ export function CourseDetail() {
                   src={previewEmbedSrc}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
                 />
               ) : hasUploadedBanner ? (
                 <div
@@ -276,6 +301,17 @@ export function CourseDetail() {
                 </div>
               )}
             </div>
+            {showVimeoEmbedHelp && (
+              <div className="cd-vimeo-help" role="note">
+                {vimeoPageUrl ? (
+                  <a href={vimeoPageUrl} target="_blank" rel="noopener noreferrer">Open on Vimeo</a>
+                ) : null}
+                {vimeoPageUrl ? <span className="embed-vimeo-help-sep">·</span> : null}
+                <span>
+                  If playback is blocked, allow embedding for this domain in Vimeo (<strong>Privacy</strong> → where the video can appear). For private videos, use the full share link with <code>?h=…</code>.
+                </span>
+              </div>
+            )}
 
             {/* Tabs */}
             <div className="cd-tabs" role="tablist" aria-label="Course sections">
@@ -338,21 +374,24 @@ export function CourseDetail() {
                       </button>
                       {isModuleOpen(mod._id, mi) && (
                         <div className="cd-module-body">
-                          {mod.lessons.map((lesson, li) => (
+                          {mod.lessons.map((lesson, li) => {
+                            const clock = lessonClockLabel(lesson, videoDurationByUrl);
+                            return (
                             <div key={lesson._id || li} className="cd-lesson-row">
                               <span className="cd-lesson-num">{li + 1}</span>
                               <PlaySquare size={15} className="cd-row-icon" />
                               <span className="cd-row-title">{lesson.title}</span>
                               <span className="cd-lesson-right">
-                                {lesson.duration && (
-                                  <span className="cd-lesson-duration">
-                                    <Clock size={12} /> {lesson.duration}
+                                {clock && (
+                                  <span className="cd-lesson-duration" title="Video length">
+                                    {clock}
                                   </span>
                                 )}
                                 <Lock size={13} className="cd-lock-icon" />
                               </span>
                             </div>
-                          ))}
+                            );
+                          })}
                           {mod.resources.map((res, ri) => (
                             <div key={res._id || ri} className="cd-lesson-row cd-resource-row">
                               <span className="cd-lesson-num">{mod.lessons.length + ri + 1}</span>

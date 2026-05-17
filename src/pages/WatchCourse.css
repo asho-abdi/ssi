@@ -260,8 +260,10 @@
 }
 
 .watch-lesson-meta {
-  color: #93a2b5;
-  font-size: 0.66rem;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .watch-lesson-state {
@@ -424,6 +426,33 @@
   height: 100%;
   border: 0;
   display: block;
+}
+
+.embed-vimeo-help {
+  margin-top: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.embed-vimeo-help a {
+  color: #1d3557;
+  font-weight: 700;
+  text-decoration: none;
+}
+.embed-vimeo-help a:hover { text-decoration: underline; }
+.embed-vimeo-help code {
+  font-size: 0.78em;
+  background: #e2e8f0;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.embed-vimeo-help-sep {
+  margin: 0 0.35rem;
+  color: #94a3b8;
 }
 
 .watch-video-empty {

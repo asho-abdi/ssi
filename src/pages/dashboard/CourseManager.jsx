@@ -155,6 +155,7 @@ export function CourseManager({ mode = 'editor' }) {
   const [resourceUploadState, setResourceUploadState] = useState({ target: null, pct: 0 });
   const [topicUiState, setTopicUiState] = useState({});
   const [resourceDoneState, setResourceDoneState] = useState({});
+  const [lessonUiState, setLessonUiState] = useState({});
   const [instructorPercentage, setInstructorPercentage] = useState(70);
   const [form, setForm] = useState({
     title: '',
@@ -212,6 +213,24 @@ export function CourseManager({ mode = 'editor' }) {
       return next;
     });
   }, [form.all_resources, form.topics]);
+
+  useEffect(() => {
+    setLessonUiState((prev) => {
+      const next = {};
+      (form.topics || []).forEach((topic, topicIdx) => {
+        const tk = topicUiKey(topic, topicIdx);
+        (topic.lessons || []).forEach((lesson, lessonIdx) => {
+          const lk = `${tk}::${String(lesson?._client_id || lesson?._id || `lesson-${lessonIdx}`)}`;
+          const cur = prev[lk];
+          next[lk] = {
+            isOpen: cur?.isOpen ?? true,
+            done: cur?.done ?? false,
+          };
+        });
+      });
+      return next;
+    });
+  }, [form.topics]);
 
   const heading = useMemo(() => {
     if (isAdmin) return { title: 'All courses' };
@@ -559,6 +578,36 @@ export function CourseManager({ mode = 'editor' }) {
         done: true,
       },
     }));
+  }
+
+  function lessonUiKey(topic, topicIdx, lesson, lessonIdx) {
+    const tk = topicUiKey(topic, topicIdx);
+    return `${tk}::${String(lesson?._client_id || lesson?._id || `lesson-${lessonIdx}`)}`;
+  }
+
+  function markLessonDone(topic, topicIdx, lesson, lessonIdx) {
+    const key = lessonUiKey(topic, topicIdx, lesson, lessonIdx);
+    setLessonUiState((prev) => ({
+      ...prev,
+      [key]: {
+        isOpen: false,
+        done: true,
+      },
+    }));
+  }
+
+  function toggleLessonOpen(topic, topicIdx, lesson, lessonIdx) {
+    const key = lessonUiKey(topic, topicIdx, lesson, lessonIdx);
+    setLessonUiState((prev) => {
+      const cur = prev[key] || { done: false, isOpen: true };
+      return {
+        ...prev,
+        [key]: {
+          done: cur.done ?? false,
+          isOpen: !(cur.isOpen ?? true),
+        },
+      };
+    });
   }
 
   function addTopic() {
@@ -1314,15 +1363,59 @@ export function CourseManager({ mode = 'editor' }) {
                   {topic.lessons?.length > 0 && (
                     <div className="cm-topic-block">
                       <h4>Lessons</h4>
-                      {topic.lessons.map((lesson, lessonIdx) => (
-                        <div key={`topic-${topic._client_id || topicIdx}-lesson-${lesson._client_id || lesson._id || lessonIdx}`} className="cm-item">
+                      {topic.lessons.map((lesson, lessonIdx) => {
+                        const lk = lessonUiKey(topic, topicIdx, lesson, lessonIdx);
+                        const lessonState = lessonUiState[lk] || { done: false, isOpen: true };
+                        const lessonTitleShort = lesson.title?.trim() || `Lesson ${lessonIdx + 1}`;
+                        return (
+                        <div
+                          key={`topic-${topic._client_id || topicIdx}-lesson-${lesson._client_id || lesson._id || lessonIdx}`}
+                          className={`cm-item ${lessonState.done ? 'is-done' : ''}`}
+                        >
                           <div className="cm-item-head">
-                            <span>Lesson {lessonIdx + 1}</span>
-                            <button type="button" className="cm-link-btn" onClick={() => removeTopicLesson(topicIdx, lessonIdx)}>
-                              <Trash2 size={14} />
-                              Remove
-                            </button>
+                            <span
+                              style={{
+                                maxWidth: '52%',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                              title={lessonTitleShort}
+                            >
+                              Lesson {lessonIdx + 1}: {lessonTitleShort}
+                            </span>
+                            <div className="cm-item-head-actions">
+                              {lessonState.done && (
+                                <span className="cm-resource-done-badge">
+                                  <Check size={12} />
+                                  Done
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                className="btn btn-secondary cm-resource-done-btn"
+                                onClick={() => markLessonDone(topic, topicIdx, lesson, lessonIdx)}
+                              >
+                                <Check size={13} />
+                                {lessonState.done ? 'Done' : 'Mark Done'}
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-ghost cm-resource-toggle-btn"
+                                aria-expanded={lessonState.isOpen}
+                                aria-label={`${lessonState.isOpen ? 'Collapse' : 'Expand'} lesson`}
+                                onClick={() => toggleLessonOpen(topic, topicIdx, lesson, lessonIdx)}
+                              >
+                                <ChevronDown className={lessonState.isOpen ? 'is-open' : ''} size={15} />
+                              </button>
+                              <button type="button" className="cm-link-btn" onClick={() => removeTopicLesson(topicIdx, lessonIdx)}>
+                                <Trash2 size={14} />
+                                Remove
+                              </button>
+                            </div>
                           </div>
+                          <div className={`cm-resource-content-wrap ${lessonState.isOpen ? 'is-open' : ''}`}>
+                            <div className="cm-resource-content">
                           <div className="cm-grid">
                             <div>
                               <label className="label">Lesson title</label>
@@ -1336,6 +1429,7 @@ export function CourseManager({ mode = 'editor' }) {
                               <label className="label">Embed URL</label>
                               <input
                                 className="input"
+                                placeholder="YouTube or Vimeo link — for private Vimeo, paste full URL with ?h=…"
                                 value={lesson.video_url}
                                 onChange={(e) => setTopicLessonAt(topicIdx, lessonIdx, { video_url: e.target.value })}
                               />
@@ -1484,8 +1578,11 @@ export function CourseManager({ mode = 'editor' }) {
                                 );
                               })}
                           </div>
+                            </div>
+                          </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
 
@@ -1984,8 +2081,11 @@ export function CourseManager({ mode = 'editor' }) {
                     className="input"
                     value={form.video_url}
                     onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-                    placeholder="https://youtube.com/embed/..."
+                    placeholder="https://www.youtube.com/watch?v=… or https://vimeo.com/… (include ?h= for private Vimeo)"
                   />
+                  <p className="cm-side-note" style={{ marginTop: '0.45rem' }}>
+                    Vimeo: allow your LMS domain under the video&apos;s <strong>Privacy</strong> → where it can be embedded. Private links need the full share URL including <code style={{ fontSize: '0.85em' }}>?h=…</code>.
+                  </p>
                 </div>
               </div>
             </section>
