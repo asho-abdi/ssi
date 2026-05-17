@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api/client';
 import { toEmbedSrc, getVimeoPageUrl, isVimeoEmbedUrl } from '../utils/embed';
-import { formatDurationClock, formatManualLessonDuration } from '../utils/formatDuration';
+import { lessonDurationLabel } from '../utils/formatDuration';
 import { ArrowLeft, ArrowRight, Award, CheckCircle2, ChevronRight, Download, FileArchive, FileText, Loader2, Megaphone, MessageSquareText, PlayCircle, Star, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './WatchCourse.css';
@@ -857,9 +857,7 @@ export function WatchCourse() {
                                 ? pct >= 100
                                 : progress?.completed_lesson_ids?.some((id) => String(id) === String(l._id));
                             const isActive = String(activeLesson?._id) === String(l._id);
-                            const u = l?.video_url?.trim();
-                            const sec = u && lessonDurationByUrl[u] != null ? lessonDurationByUrl[u] : null;
-                            const clock = sec != null ? formatDurationClock(sec) : formatManualLessonDuration(l?.duration);
+                            const clock = lessonDurationLabel(l, lessonDurationByUrl);
                             return (
                               <li key={String(l._id || `${topic.id}-lesson-${idx}`)}>
                                 <button

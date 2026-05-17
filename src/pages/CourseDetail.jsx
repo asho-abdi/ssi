@@ -21,7 +21,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { addToCart, getCartIds, removeFromCart } from '../utils/cart';
 import { toEmbedSrc, getVimeoPageUrl, isVimeoEmbedUrl } from '../utils/embed';
-import { formatDurationClock, formatManualLessonDuration } from '../utils/formatDuration';
+import { lessonDurationLabel } from '../utils/formatDuration';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import './CourseDetail.css';
 
@@ -38,12 +38,6 @@ function levelLabel(level) {
   if (value === 'intermediate') return 'Intermediate';
   if (value === 'expert') return 'Expert';
   return 'All levels';
-}
-
-function lessonClockLabel(lesson, durationMap) {
-  const u = lesson?.video_url?.trim();
-  if (u && durationMap[u] != null) return formatDurationClock(durationMap[u]);
-  return formatManualLessonDuration(lesson?.duration);
 }
 
 export function CourseDetail() {
@@ -375,7 +369,7 @@ export function CourseDetail() {
                       {isModuleOpen(mod._id, mi) && (
                         <div className="cd-module-body">
                           {mod.lessons.map((lesson, li) => {
-                            const clock = lessonClockLabel(lesson, videoDurationByUrl);
+                            const clock = lessonDurationLabel(lesson, videoDurationByUrl);
                             return (
                             <div key={lesson._id || li} className="cd-lesson-row">
                               <span className="cd-lesson-num">{li + 1}</span>
@@ -383,7 +377,7 @@ export function CourseDetail() {
                               <span className="cd-row-title">{lesson.title}</span>
                               <span className="cd-lesson-right">
                                 {clock && (
-                                  <span className="cd-lesson-duration" title="Video length">
+                                  <span className="cd-lesson-duration" title="Length (minutes:seconds)">
                                     {clock}
                                   </span>
                                 )}

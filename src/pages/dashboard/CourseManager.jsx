@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
+import { formatManualLessonDuration } from '../../utils/formatDuration';
 
 const emptyLesson = { title: '', video_url: '', duration: '', order: 0 };
 const emptyAssignment = { title: '', description: '', due_date: '', points: 100 };
@@ -1435,12 +1436,20 @@ export function CourseManager({ mode = 'editor' }) {
                               />
                             </div>
                             <div>
-                              <label className="label">Duration (e.g. 12 min, 1h 20m)</label>
+                              <label className="label">Duration (minutes:seconds)</label>
                               <input
                                 className="input"
-                                placeholder="e.g. 12 min"
+                                placeholder="e.g. 8:45 (8 min, 45 sec)"
+                                inputMode="text"
+                                autoComplete="off"
                                 value={lesson.duration || ''}
                                 onChange={(e) => setTopicLessonAt(topicIdx, lessonIdx, { duration: e.target.value })}
+                                onBlur={(e) => {
+                                  const v = e.target.value.trim();
+                                  if (!v) return;
+                                  const norm = formatManualLessonDuration(v);
+                                  if (norm) setTopicLessonAt(topicIdx, lessonIdx, { duration: norm });
+                                }}
                               />
                             </div>
                           </div>
